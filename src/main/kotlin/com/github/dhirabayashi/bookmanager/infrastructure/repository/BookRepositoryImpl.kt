@@ -1,6 +1,6 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
-import com.github.dhirabayashi.bookmanager.domain.enum.BookStatus
+import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
@@ -61,6 +61,6 @@ class BookRepositoryImpl(
         title = bookRecord.get(BOOKS.TITLE),
         price = bookRecord.get(BOOKS.PRICE),
         authors = authorRecords.map { authorModel(it) },
-        status = BookStatus.valueOf(bookRecord.get(BOOKS.STATUS)),
+        publishingStatus = PublishingStatus.valueOf(bookRecord.get(BOOKS.PUBLISHING_STATUS)),
     )
 }

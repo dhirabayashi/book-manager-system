@@ -9,14 +9,14 @@ import com.github.dhirabayashi.bookmanager.domain.model.Book
  * @property title タイトル
  * @property price 価格
  * @property authors 著者の一覧
- * @property status ステータス
+ * @property publishingStatus 出版状況
  */
 data class BookResponse(
     val id: Int,
     val title: String,
     val price: Int,
     val authors: List<AuthorResponse>,
-    val status: String,
+    val publishingStatus: String,
 ) {
     companion object {
         /**
@@ -30,7 +30,7 @@ data class BookResponse(
             title = model.title,
             price = model.price,
             authors = model.authors.map { AuthorResponse.of(it) },
-            status = model.status.name,
+            publishingStatus = model.publishingStatus.name,
         )
     }
 }

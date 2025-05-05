@@ -1,9 +1,9 @@
 package com.github.dhirabayashi.bookmanager.domain.enum
 
 /**
- * 書籍のステータス
+ * 出版状況
  */
-enum class BookStatus {
+enum class PublishingStatus {
     /**
      * 未出版
      */
