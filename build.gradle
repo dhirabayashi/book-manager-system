@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.jooq:jooq-meta'
     implementation 'org.jooq:jooq-codegen'
     implementation 'org.jooq:jooq-postgres-extensions:3.19.11'
+    implementation 'de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.3.0'
 
     jooqCodegen 'org.postgresql:postgresql:42.7.3'
 

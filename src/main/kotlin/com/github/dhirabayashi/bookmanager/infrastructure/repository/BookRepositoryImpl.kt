@@ -43,7 +43,7 @@ class BookRepositoryImpl(
      * @param record 著者レコード
      * @return ドメインモデル
      */
-    private fun authorModel(record: Record) = Author(
+    private fun authorModel(record: Record) = Author.create(
         id = record.get(AUTHORS.ID),
         name = record.get(AUTHORS.NAME),
         birthDate = record.get(AUTHORS.BIRTH_DATE),

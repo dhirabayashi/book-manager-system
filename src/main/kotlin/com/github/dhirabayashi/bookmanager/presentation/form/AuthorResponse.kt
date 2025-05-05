@@ -23,7 +23,7 @@ data class AuthorResponse(
          * @return レスポンス用オブジェクト
          */
         fun of(model: Author) = AuthorResponse(
-            id = model.id,
+            id = model.id ?: error("IDがnullのレスポンスを返すことはできません"),
             name = model.name,
             birthDate = model.birthDate,
         )
