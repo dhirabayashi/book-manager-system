@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class BookManagerApplication
 
 fun main(args: Array<String>) {
-	runApplication<BookManagerApplication>(*args)
+    @Suppress("SpreadOperator")
+    runApplication<BookManagerApplication>(*args)
 }
