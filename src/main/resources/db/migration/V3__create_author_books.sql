@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS author_books (
-    book_id INTEGER NOT NULL REFERENCES books(id),
-    author_id INTEGER NOT NULL REFERENCES authors(id),
+    book_id VARCHAR(26) NOT NULL REFERENCES books(id),
+    author_id VARCHAR(26) NOT NULL REFERENCES authors(id),
     PRIMARY KEY (book_id, author_id)
 );
 

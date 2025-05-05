@@ -12,5 +12,5 @@ interface BookRepository {
      * @param authorId 著者ID
      * @return 書籍の一覧
      */
-    fun findBooksByAuthorId(authorId: Int): List<Book>
+    fun findBooksByAuthorId(authorId: String): List<Book>
 }

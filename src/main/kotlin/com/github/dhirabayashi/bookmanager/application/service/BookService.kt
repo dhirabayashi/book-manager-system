@@ -18,7 +18,7 @@ class BookService(
      * @return 書籍の一覧
      */
     @Transactional(readOnly = true)
-    fun retrieveBooksByAuthorId(authorId: Int): List<Book> {
+    fun retrieveBooksByAuthorId(authorId: String): List<Book> {
         return authorBooksRepository.findBooksByAuthorId(authorId)
     }
 }

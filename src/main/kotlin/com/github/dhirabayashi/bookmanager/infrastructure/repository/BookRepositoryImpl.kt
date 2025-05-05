@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository
 class BookRepositoryImpl(
     private val dslContext: DSLContext,
 ) : BookRepository {
-    override fun findBooksByAuthorId(authorId: Int): List<Book> {
+    override fun findBooksByAuthorId(authorId: String): List<Book> {
         // 書籍の一覧
         val books = dslContext.select()
             .from(AUTHOR_BOOKS)

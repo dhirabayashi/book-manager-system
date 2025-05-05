@@ -12,7 +12,7 @@ import com.github.dhirabayashi.bookmanager.domain.model.Book
  * @property publishingStatus 出版状況
  */
 data class BookResponse(
-    val id: Int,
+    val id: String,
     val title: String,
     val price: Int,
     val authors: List<AuthorResponse>,

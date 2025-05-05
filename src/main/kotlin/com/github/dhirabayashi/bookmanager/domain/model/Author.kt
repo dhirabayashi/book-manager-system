@@ -10,7 +10,7 @@ import java.time.LocalDate
  * @property birthDate 生年月日
  */
 data class Author(
-    val id: Int,
+    val id: String,
     val name: String,
     val birthDate: LocalDate,
 )

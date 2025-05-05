@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS authors (
-    id SERIAL PRIMARY KEY,
+    id VARCHAR(26) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     birth_date DATE NOT NULL
 );

@@ -25,7 +25,7 @@ class BookController(
      * @return 書籍の一覧レスポンス
      */
     @GetMapping("/author_id/{author_id}")
-    fun getBooksByAuthorId(@PathVariable("author_id") authorId: Int): BookListResponse {
+    fun getBooksByAuthorId(@PathVariable("author_id") authorId: String): BookListResponse {
         val bookList = bookService.retrieveBooksByAuthorId(authorId)
             .map { BookResponse.of(it) }
 
