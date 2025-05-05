@@ -1,64 +1,109 @@
 buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.flywaydb:flyway-database-postgresql:11.8.0"
-	}
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.flywaydb:flyway-database-postgresql:11.8.0"
+    }
 }
 
 plugins {
-	id 'org.jetbrains.kotlin.jvm' version '1.9.25'
-	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.25'
-	id 'org.springframework.boot' version '3.4.5'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'com.avast.gradle.docker-compose' version '0.17.12'
-	id 'org.flywaydb.flyway' version '11.8.0'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.1.20'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.avast.gradle.docker-compose' version '0.17.12'
+    id 'org.flywaydb.flyway' version '11.8.0'
+    id 'org.jooq.jooq-codegen-gradle' version '3.19.23'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'org.flywaydb:flyway-core'
-	implementation 'org.jetbrains.kotlin:kotlin-reflect'
-	implementation 'org.postgresql:postgresql:42.7.5'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.postgresql:postgresql:42.7.5'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.jooq:jooq-meta'
+    implementation 'org.jooq:jooq-codegen'
+    implementation 'org.jooq:jooq-postgres-extensions:3.19.11'
+
+    jooqCodegen 'org.postgresql:postgresql:42.7.3'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll '-Xjsr305=strict'
-	}
+    compilerOptions {
+        freeCompilerArgs.addAll '-Xjsr305=strict'
+    }
+}
+
+sourceSets.main {
+    java.srcDirs("build/generated-sources/jooq")
+}
+
+jooq {
+    configuration {
+
+        jdbc {
+            driver = "org.postgresql.Driver"
+            url = "jdbc:postgresql://localhost:5432/postgres"
+            user = "root"
+            password = "root"
+        }
+        generator {
+            database {
+                name = "org.jooq.meta.postgres.PostgresDatabase"
+                inputSchema = "public"
+                includes = ".*"
+                excludes = "flyway_schema_history"
+            }
+
+            target {
+                packageName = "com.github.dhirabayashi.bookmanager.infrastructure.db"
+            }
+        }
+    }
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(tasks.named("jooqCodegen"))
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 dockerCompose {
-	useComposeFiles = ['docker/compose.yaml']
+    useComposeFiles = ['docker/compose.yaml']
 }
 
 flyway {
-	// DBの接続先情報を設定（環境変数から取得）
-	driver = 'org.postgresql.Driver'
-	url = "jdbc:postgresql://localhost:5432/postgres"
-	user = "root"
-	password = "root"
+    driver = 'org.postgresql.Driver'
+    url = "jdbc:postgresql://localhost:5432/postgres"
+    user = "root"
+    password = "root"
+}
+
+tasks.named("jooqCodegen") {
+    dependsOn(tasks.named("flywayMigrate"))
+    inputs.files(fileTree("src/main/resources/db/migration"))
 }
