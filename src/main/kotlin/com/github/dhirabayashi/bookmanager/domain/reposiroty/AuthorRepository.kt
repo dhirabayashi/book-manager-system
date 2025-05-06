@@ -20,4 +20,12 @@ interface AuthorRepository {
      * @return 登録した著者情報
      */
     fun save(author: Author): Author
+
+    /**
+     * 著者IDリストをもとに著者情報を取得する
+     *
+     * @param ids 著者IDリスト
+     * @return 著者情報リスト
+     */
+    fun findByIds(ids: List<String>): List<Author>
 }

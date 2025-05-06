@@ -1,6 +1,6 @@
 package com.github.dhirabayashi.bookmanager.presentation.form
 
-import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.application.service.BookWithAuthorsDto
 
 /**
  * 書籍レスポンス
@@ -20,17 +20,17 @@ data class BookResponse(
 ) {
     companion object {
         /**
-         * ドメインモデルをレスポンス用オブジェクトに詰め替える
+         * Dtoをレスポンス用オブジェクトに詰め替える
          *
-         * @param model ドメインモデル
+         * @param dto Serviceからの出力
          * @return レスポンス用オブジェクト
          */
-        fun of(model: Book) = BookResponse(
-            id = model.id,
-            title = model.title,
-            price = model.price,
-            authors = model.authors.map { AuthorResponse.of(it) },
-            publishingStatus = model.publishingStatus.name,
+        fun of(dto: BookWithAuthorsDto) = BookResponse(
+            id = dto.id,
+            title = dto.title,
+            price = dto.price,
+            authors = dto.authors.map { AuthorResponse.of(it) },
+            publishingStatus = dto.publishingStatus.name,
         )
     }
 }

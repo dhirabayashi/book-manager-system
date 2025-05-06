@@ -20,8 +20,9 @@ class AuthorService(
      * @return 全ての著者
      */
     @Transactional(readOnly = true)
-    fun listAll(): List<Author> {
+    fun listAll(): List<AuthorDto> {
         return authorRepository.findAll()
+            .map { AuthorDto.of(it) }
     }
 
     /**
@@ -31,7 +32,8 @@ class AuthorService(
      * @return 登録した著者
      */
     @Transactional(rollbackFor = [Exception::class])
-    fun save(author: Author): Author {
+    fun save(author: Author): AuthorDto {
         return authorRepository.save(author)
+            .let { AuthorDto.of(it) }
     }
 }

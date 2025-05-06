@@ -1,6 +1,6 @@
 package com.github.dhirabayashi.bookmanager.presentation.form
 
-import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.application.service.AuthorDto
 import java.time.LocalDate
 
 /**
@@ -17,15 +17,15 @@ data class AuthorResponse(
 ) {
     companion object {
         /**
-         * ドメインモデルをレスポンス用オブジェクトに詰め替える
+         * Dtoをレスポンス用オブジェクトに詰め替える
          *
-         * @param model ドメインモデル
+         * @param dto Serviceからの出力
          * @return レスポンス用オブジェクト
          */
-        fun of(model: Author) = AuthorResponse(
-            id = model.id ?: error("IDがnullのレスポンスを返すことはできません"),
-            name = model.name,
-            birthDate = model.birthDate,
+        fun of(dto: AuthorDto) = AuthorResponse(
+            id = dto.id,
+            name = dto.name,
+            birthDate = dto.birthDate,
         )
     }
 }

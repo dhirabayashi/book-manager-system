@@ -29,6 +29,14 @@ class AuthorRepositoryImpl(
         return Author.create(record.id, record.name, record.birthDate)
     }
 
+    override fun findByIds(ids: List<String>): List<Author> {
+        return this.dslContext.select()
+            .from(AUTHORS)
+            .where(AUTHORS.ID.`in`(ids))
+            .fetch()
+            .map { toModel(it) }
+    }
+
     /**
      * 著者レコードを著者のドメインモデルに変換する
      *
