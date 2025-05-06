@@ -1,5 +1,6 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
+import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
@@ -38,6 +39,12 @@ class BookService(
         }
     }
 
+    /**
+     * 書籍を登録する
+     *
+     * @param book 登録する書籍
+     * @return 登録された書籍
+     */
     @Transactional(rollbackFor = [Exception::class])
     fun add(book: Book): BookWithAuthorsDto {
         // 書籍を登録
@@ -51,6 +58,33 @@ class BookService(
             price = createdBook.price,
             authors = authors.map { AuthorDto.of(it) },
             publishingStatus = createdBook.publishingStatus,
+        )
+    }
+
+    /**
+     * 書籍を更新する
+     *
+     * @param book 更新する書籍
+     * @return 更新された書籍
+     */
+    @Transactional(rollbackFor = [Exception::class])
+    fun update(book: Book): BookWithAuthorsDto {
+        require(book.id != null) {
+            "書籍IDは必須です"
+        }
+
+        // 書籍を更新
+        val updatedBook = bookRepository.update(book.id, book)
+            ?: throw EntityNotFoundException("書籍", book.id)
+
+        // 著者を取得して返す（著者も取得したほうが使いやすいかもしれず、また余分なレスポンス用クラスを作らなくて済む）
+        val authors = authorRepository.findByIds(updatedBook.authorIds)
+        return BookWithAuthorsDto(
+            id = updatedBook.id ?: error("IDがnullのレスポンスを返すことはできません"),
+            title = updatedBook.title,
+            price = updatedBook.price,
+            authors = authors.map { AuthorDto.of(it) },
+            publishingStatus = updatedBook.publishingStatus,
         )
     }
 }

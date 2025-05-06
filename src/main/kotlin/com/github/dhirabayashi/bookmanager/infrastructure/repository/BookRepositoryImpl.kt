@@ -63,6 +63,38 @@ class BookRepositoryImpl(
         )
     }
 
+    override fun update(bookId: String, book: Book): Book? {
+        // 書籍の更新
+        val updateCount = dslContext.update(BOOKS)
+            .set(BOOKS.TITLE, book.title)
+            .set(BOOKS.PRICE, book.price)
+            .set(BOOKS.PUBLISHING_STATUS, book.publishingStatus.name)
+            .where(BOOKS.ID.eq(bookId))
+            .execute()
+
+        if (updateCount == 0) {
+            return null
+        }
+
+        // 著者と書籍のリレーションの更新
+        // 同時実行時に不整合が生じるかもしれないが、ユースケース的には実際にそうなる可能性が低いため排他制御は一旦考えない
+
+        // 件数自体変わってるかもしれないため、DELETEとINSERTを使う
+        dslContext.delete(AUTHOR_BOOKS)
+            .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
+            .execute()
+
+        dslContext.batch(
+            book.authorIds.map { authorId ->
+                dslContext.insertInto(AUTHOR_BOOKS)
+                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+                    .values(authorId, bookId)
+            }
+        ).execute()
+
+        return book
+    }
+
     /**
      * 書籍レコードを書籍のドメインモデルに変換する
      *

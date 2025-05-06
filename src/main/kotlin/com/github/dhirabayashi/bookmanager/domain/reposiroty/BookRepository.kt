@@ -21,4 +21,13 @@ interface BookRepository {
      * @return 登録された書籍
      */
     fun add(book: Book): Book
+
+    /**
+     * 書籍を更新する
+     *
+     * @param bookId 書籍ID
+     * @param book 書籍の更新データ
+     * @return 更新後の書籍
+     */
+    fun update(bookId: String, book: Book): Book?
 }

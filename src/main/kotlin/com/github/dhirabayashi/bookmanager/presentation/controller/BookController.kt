@@ -5,10 +5,12 @@ import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookCreateRequest
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookListResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.book.BookUpdateRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -57,5 +59,25 @@ class BookController(
         val created = bookService.add(book)
 
         return BookResponse.of(created)
+    }
+
+    /**
+     * 書籍を更新する
+     *
+     * @param paramBook 書籍の更新データ
+     * @return 更新後の書籍
+     */
+    @PutMapping
+    fun putBook(@RequestBody paramBook: BookUpdateRequest): BookResponse {
+        val book = Book.create(
+            title = paramBook.title,
+            price = paramBook.price,
+            authorIds = paramBook.authorIds,
+            publishingStatus = paramBook.publishingStatus.toModel(),
+        )
+
+        val updated = bookService.update(book)
+
+        return BookResponse.of(updated)
     }
 }
