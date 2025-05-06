@@ -5,11 +5,13 @@ import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.presentation.form.BookCreateRequest
 import com.github.dhirabayashi.bookmanager.presentation.form.BookListResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.BookResponse
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -43,6 +45,7 @@ class BookController(
      * @return 登録された書籍
      */
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@RequestBody paramBook: BookCreateRequest): BookResponse {
         val book = Book.create(
             title = paramBook.title,
