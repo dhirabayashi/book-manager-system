@@ -54,7 +54,13 @@ class BookRepositoryImpl(
             }
         ).execute()
 
-        return book.copy(id = bookId)
+        return Book.create(
+            id = bookId,
+            title = book.title,
+            price = book.price,
+            authorIds = book.authorIds,
+            publishingStatus = book.publishingStatus,
+        )
     }
 
     /**
@@ -64,7 +70,7 @@ class BookRepositoryImpl(
      * @param authorIds 著者IDリスト
      * @return ドメインモデル
      */
-    private fun toModel(bookRecord: Record, authorIds: List<String>) = Book(
+    private fun toModel(bookRecord: Record, authorIds: List<String>) = Book.create(
         id = bookRecord.get(BOOKS.ID),
         title = bookRecord.get(BOOKS.TITLE),
         price = bookRecord.get(BOOKS.PRICE),

@@ -11,7 +11,7 @@ import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
  * @property authorIds 著者一覧
  * @property publishingStatus 出版状況
  */
-data class Book(
+data class Book private constructor(
     val id: String?,
     val title: String,
     val price: Int,
