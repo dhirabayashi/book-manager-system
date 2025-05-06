@@ -39,7 +39,7 @@ class BookService(
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun save(book: Book): BookWithAuthorsDto {
+    fun add(book: Book): BookWithAuthorsDto {
         // 書籍を登録
         val createdBook = bookRepository.add(book)
 

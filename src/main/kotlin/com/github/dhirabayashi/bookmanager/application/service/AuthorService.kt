@@ -32,8 +32,8 @@ class AuthorService(
      * @return 登録した著者
      */
     @Transactional(rollbackFor = [Exception::class])
-    fun save(author: Author): AuthorDto {
-        return authorRepository.save(author)
+    fun add(author: Author): AuthorDto {
+        return authorRepository.add(author)
             .let { AuthorDto.of(it) }
     }
 }

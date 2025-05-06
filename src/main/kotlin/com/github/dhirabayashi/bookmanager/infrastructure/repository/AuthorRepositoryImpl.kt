@@ -19,7 +19,7 @@ class AuthorRepositoryImpl(
             .fetch().map { toModel(it) }
     }
 
-    override fun save(author: Author): Author {
+    override fun add(author: Author): Author {
         val record = dslContext.newRecord(AUTHORS).also {
             it.id = author.id ?: idGenerator.generate()
             it.name = author.name

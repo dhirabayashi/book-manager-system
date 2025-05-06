@@ -48,8 +48,9 @@ class AuthorController(
             name = paramAuthor.name,
             birthDate = paramAuthor.birthDate,
         )
-        val created = authorService.save(author)
+        val created = authorService.add(author)
 
         return AuthorResponse.of(created)
     }
+
 }

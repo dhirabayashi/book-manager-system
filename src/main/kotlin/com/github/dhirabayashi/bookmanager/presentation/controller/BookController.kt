@@ -54,7 +54,7 @@ class BookController(
             publishingStatus = paramBook.publishingStatus.toModel(),
         )
 
-        val created = bookService.save(book)
+        val created = bookService.add(book)
 
         return BookResponse.of(created)
     }

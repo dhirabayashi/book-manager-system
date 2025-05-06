@@ -19,7 +19,7 @@ interface AuthorRepository {
      * @param author 登録する著者
      * @return 登録した著者情報
      */
-    fun save(author: Author): Author
+    fun add(author: Author): Author
 
     /**
      * 著者IDリストをもとに著者情報を取得する
