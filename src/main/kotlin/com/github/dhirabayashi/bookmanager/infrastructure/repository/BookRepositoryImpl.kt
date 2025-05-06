@@ -1,5 +1,6 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
+import com.github.dhirabayashi.bookmanager.domain.IdGenerator
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class BookRepositoryImpl(
     private val dslContext: DSLContext,
+    private val idGenerator: IdGenerator,
 ) : BookRepository {
     override fun findByAuthorId(authorId: String): List<Book> {
         // 書籍の一覧
@@ -33,6 +35,26 @@ class BookRepositoryImpl(
 
             toModel(book, authorIds)
         }
+    }
+
+    override fun add(book: Book): Book {
+        // 書籍の登録
+        val bookId = book.id ?: idGenerator.generate()
+        dslContext.insertInto(BOOKS)
+            .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
+            .values(bookId, book.title, book.price, book.publishingStatus.name)
+            .execute()
+
+        // 書籍と著者のリレーションの登録
+        dslContext.batch(
+            book.authorIds.map { authorId ->
+                dslContext.insertInto(AUTHOR_BOOKS)
+                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+                    .values(authorId, bookId)
+            }
+        ).execute()
+
+        return book.copy(id = bookId)
     }
 
     /**

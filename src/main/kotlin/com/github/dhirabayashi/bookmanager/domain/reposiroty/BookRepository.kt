@@ -13,4 +13,12 @@ interface BookRepository {
      * @return 書籍の一覧
      */
     fun findByAuthorId(authorId: String): List<Book>
+
+    /**
+     * 書籍を登録する
+     *
+     * @param book 登録する書籍
+     * @return 登録された書籍
+     */
+    fun add(book: Book): Book
 }

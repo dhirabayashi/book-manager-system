@@ -14,13 +14,13 @@ class AuthorRepositoryImpl(
     private val idGenerator: IdGenerator,
 ) : AuthorRepository {
     override fun findAll(): List<Author> {
-        return this.dslContext.select()
+        return dslContext.select()
             .from(AUTHORS)
             .fetch().map { toModel(it) }
     }
 
     override fun save(author: Author): Author {
-        val record = this.dslContext.newRecord(AUTHORS).also {
+        val record = dslContext.newRecord(AUTHORS).also {
             it.id = author.id ?: idGenerator.generate()
             it.name = author.name
             it.birthDate = author.birthDate
@@ -30,7 +30,7 @@ class AuthorRepositoryImpl(
     }
 
     override fun findByIds(ids: List<String>): List<Author> {
-        return this.dslContext.select()
+        return dslContext.select()
             .from(AUTHORS)
             .where(AUTHORS.ID.`in`(ids))
             .fetch()
