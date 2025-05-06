@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class BookRepositoryImpl(
-    private val dslContext: DSLContext,
+    private val create: DSLContext,
     private val idGenerator: IdGenerator,
 ) : BookRepository {
     override fun findByAuthorId(authorId: String): List<Book> {
         // 書籍の一覧
-        val books = dslContext.select()
+        val books = create.select()
             .from(AUTHOR_BOOKS)
             .join(BOOKS)
             .on(BOOKS.ID.eq(AUTHOR_BOOKS.BOOK_ID))
@@ -27,7 +27,7 @@ class BookRepositoryImpl(
         // 著者が複数いるかもしれないため、書籍ごとに著者を改めて取得する
         // これだと遅い場合はCQRSなどを導入して最適化することを検討する
         return books.map { book ->
-            val authorIds = dslContext.select()
+            val authorIds = create.select()
                 .from(AUTHOR_BOOKS)
                 .where(AUTHOR_BOOKS.BOOK_ID.eq(book.get(BOOKS.ID)))
                 .fetch()
@@ -38,7 +38,7 @@ class BookRepositoryImpl(
     }
 
     override fun findById(id: String): Book? {
-        val bookRecord = dslContext.select()
+        val bookRecord = create.select()
             .from(BOOKS)
             .where(BOOKS.ID.eq(id))
             .fetch()
@@ -51,7 +51,7 @@ class BookRepositoryImpl(
         check(bookRecord.size != 1)
 
         // 著者の一覧
-        val authorIds = dslContext.select()
+        val authorIds = create.select()
             .from(AUTHOR_BOOKS)
             .where(AUTHOR_BOOKS.BOOK_ID.eq(id))
             .fetch()
@@ -64,15 +64,15 @@ class BookRepositoryImpl(
     override fun add(book: Book): Book {
         // 書籍の登録
         val bookId = book.id ?: idGenerator.generate()
-        dslContext.insertInto(BOOKS)
+        create.insertInto(BOOKS)
             .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
             .values(bookId, book.title, book.price, book.publishingStatus.name)
             .execute()
 
         // 書籍と著者のリレーションの登録
-        dslContext.batch(
+        create.batch(
             book.authorIds.map { authorId ->
-                dslContext.insertInto(AUTHOR_BOOKS)
+                create.insertInto(AUTHOR_BOOKS)
                     .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
                     .values(authorId, bookId)
             }
@@ -89,7 +89,7 @@ class BookRepositoryImpl(
 
     override fun update(bookId: String, book: Book): Book? {
         // 書籍の更新
-        val updateCount = dslContext.update(BOOKS)
+        val updateCount = create.update(BOOKS)
             .set(BOOKS.TITLE, book.title)
             .set(BOOKS.PRICE, book.price)
             .set(BOOKS.PUBLISHING_STATUS, book.publishingStatus.name)
@@ -104,13 +104,13 @@ class BookRepositoryImpl(
         // 同時実行時に不整合が生じるかもしれないが、ユースケース的には実際にそうなる可能性が低いため排他制御は一旦考えない
 
         // 件数自体変わってるかもしれないため、DELETEとINSERTを使う
-        dslContext.delete(AUTHOR_BOOKS)
+        create.delete(AUTHOR_BOOKS)
             .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
             .execute()
 
-        dslContext.batch(
+        create.batch(
             book.authorIds.map { authorId ->
-                dslContext.insertInto(AUTHOR_BOOKS)
+                create.insertInto(AUTHOR_BOOKS)
                     .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
                     .values(authorId, bookId)
             }

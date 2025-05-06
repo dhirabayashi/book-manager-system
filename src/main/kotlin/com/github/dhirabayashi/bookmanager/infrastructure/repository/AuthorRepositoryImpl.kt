@@ -10,17 +10,17 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class AuthorRepositoryImpl(
-    private val dslContext: DSLContext,
+    private val create: DSLContext,
     private val idGenerator: IdGenerator,
 ) : AuthorRepository {
     override fun findAll(): List<Author> {
-        return dslContext.select()
+        return create.select()
             .from(AUTHORS)
             .fetch().map { toModel(it) }
     }
 
     override fun add(author: Author): Author {
-        val record = dslContext.newRecord(AUTHORS).also {
+        val record = create.newRecord(AUTHORS).also {
             it.id = author.id ?: idGenerator.generate()
             it.name = author.name
             it.birthDate = author.birthDate
@@ -31,7 +31,7 @@ class AuthorRepositoryImpl(
 
     override fun update(id: String, author: Author): Author? {
         // 更新実行
-        val updatedCount = dslContext.update(AUTHORS)
+        val updatedCount = create.update(AUTHORS)
             .set(AUTHORS.NAME, author.name)
             .set(AUTHORS.BIRTH_DATE, author.birthDate)
             .where(AUTHORS.ID.eq(id))
@@ -49,7 +49,7 @@ class AuthorRepositoryImpl(
     }
 
     override fun findByIds(ids: List<String>): List<Author> {
-        return dslContext.select()
+        return create.select()
             .from(AUTHORS)
             .where(AUTHORS.ID.`in`(ids))
             .fetch()
