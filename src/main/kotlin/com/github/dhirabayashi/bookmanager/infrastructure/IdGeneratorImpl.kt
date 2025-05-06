@@ -1,4 +1,4 @@
-package com.github.dhirabayashi.bookmanager.infrastructure.repository
+package com.github.dhirabayashi.bookmanager.infrastructure
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
 import de.huxhorn.sulky.ulid.ULID
