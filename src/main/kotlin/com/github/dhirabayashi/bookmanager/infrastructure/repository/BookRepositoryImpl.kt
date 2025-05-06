@@ -27,11 +27,7 @@ class BookRepositoryImpl(
         // 著者が複数いるかもしれないため、書籍ごとに著者を改めて取得する
         // これだと遅い場合はCQRSなどを導入して最適化することを検討する
         return books.map { book ->
-            val authorIds = create.select()
-                .from(AUTHOR_BOOKS)
-                .where(AUTHOR_BOOKS.BOOK_ID.eq(book.get(BOOKS.ID)))
-                .fetch()
-                .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
+            val authorIds = selectAuthorIds(book.get(BOOKS.ID))
 
             toModel(book, authorIds)
         }
@@ -51,11 +47,7 @@ class BookRepositoryImpl(
         check(bookRecord.size != 1)
 
         // 著者の一覧
-        val authorIds = create.select()
-            .from(AUTHOR_BOOKS)
-            .where(AUTHOR_BOOKS.BOOK_ID.eq(id))
-            .fetch()
-            .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
+        val authorIds = selectAuthorIds(id)
 
         // bookRecordの件数はチェック済なので必ず1件
         return toModel(bookRecord.first(), authorIds)
@@ -70,13 +62,7 @@ class BookRepositoryImpl(
             .execute()
 
         // 書籍と著者のリレーションの登録
-        create.batch(
-            book.authorIds.map { authorId ->
-                create.insertInto(AUTHOR_BOOKS)
-                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-                    .values(authorId, bookId)
-            }
-        ).execute()
+        insertAuthorBooks(bookId, book)
 
         return Book.create(
             id = bookId,
@@ -108,13 +94,7 @@ class BookRepositoryImpl(
             .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
             .execute()
 
-        create.batch(
-            book.authorIds.map { authorId ->
-                create.insertInto(AUTHOR_BOOKS)
-                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-                    .values(authorId, bookId)
-            }
-        ).execute()
+        insertAuthorBooks(bookId, book)
 
         return book
     }
@@ -133,4 +113,34 @@ class BookRepositoryImpl(
         authorIds = authorIds,
         publishingStatus = PublishingStatus.valueOf(bookRecord.get(BOOKS.PUBLISHING_STATUS)),
     )
+
+    /**
+     * 著者IDを取得する
+     *
+     * @param bookId 対象の書籍IDの
+     * @return 著者IDリスト
+     */
+    private fun selectAuthorIds(bookId: String): List<String> {
+        return create.select()
+            .from(AUTHOR_BOOKS)
+            .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
+            .fetch()
+            .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
+    }
+
+    /**
+     * 著者と書籍のリレーションを登録する
+     *
+     * @param bookId 書籍ID
+     * @param book 書籍
+     */
+    private fun insertAuthorBooks(bookId: String, book: Book) {
+        create.batch(
+            book.authorIds.map { authorId ->
+                create.insertInto(AUTHOR_BOOKS)
+                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+                    .values(authorId, bookId)
+            }
+        ).execute()
+    }
 }
