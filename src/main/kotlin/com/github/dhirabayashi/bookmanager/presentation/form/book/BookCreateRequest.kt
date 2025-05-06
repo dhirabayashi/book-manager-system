@@ -1,4 +1,4 @@
-package com.github.dhirabayashi.bookmanager.presentation.form
+package com.github.dhirabayashi.bookmanager.presentation.form.book
 
 /**
  * 書籍の登録リクエスト

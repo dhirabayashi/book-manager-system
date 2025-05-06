@@ -1,4 +1,4 @@
-package com.github.dhirabayashi.bookmanager.presentation.form
+package com.github.dhirabayashi.bookmanager.presentation.form.author
 
 import com.github.dhirabayashi.bookmanager.application.service.AuthorDto
 import java.time.LocalDate

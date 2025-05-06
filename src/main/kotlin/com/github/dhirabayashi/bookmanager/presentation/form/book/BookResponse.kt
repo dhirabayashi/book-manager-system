@@ -1,6 +1,7 @@
-package com.github.dhirabayashi.bookmanager.presentation.form
+package com.github.dhirabayashi.bookmanager.presentation.form.book
 
 import com.github.dhirabayashi.bookmanager.application.service.BookWithAuthorsDto
+import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorResponse
 
 /**
  * 書籍レスポンス

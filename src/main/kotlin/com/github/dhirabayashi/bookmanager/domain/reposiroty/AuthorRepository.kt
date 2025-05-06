@@ -22,6 +22,15 @@ interface AuthorRepository {
     fun add(author: Author): Author
 
     /**
+     * 著者を更新する
+     *
+     * @param id 対象のID
+     * @param author 著者の更新データ
+     * @return 更新後の著者情報。IDに対応するデータがなく更新しなかった場合はnull
+     */
+    fun update(id: String, author: Author): Author?
+
+    /**
      * 著者IDリストをもとに著者情報を取得する
      *
      * @param ids 著者IDリスト

@@ -2,9 +2,9 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 
 import com.github.dhirabayashi.bookmanager.application.service.BookService
 import com.github.dhirabayashi.bookmanager.domain.model.Book
-import com.github.dhirabayashi.bookmanager.presentation.form.BookCreateRequest
-import com.github.dhirabayashi.bookmanager.presentation.form.BookListResponse
-import com.github.dhirabayashi.bookmanager.presentation.form.BookResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.book.BookCreateRequest
+import com.github.dhirabayashi.bookmanager.presentation.form.book.BookListResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.book.BookResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -2,12 +2,14 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 
 import com.github.dhirabayashi.bookmanager.application.service.AuthorService
 import com.github.dhirabayashi.bookmanager.domain.model.Author
-import com.github.dhirabayashi.bookmanager.presentation.form.AuthorCreateRequest
-import com.github.dhirabayashi.bookmanager.presentation.form.AuthorListResponse
-import com.github.dhirabayashi.bookmanager.presentation.form.AuthorResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorCreateRequest
+import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorListResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorResponse
+import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorUpdateRequest
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -53,4 +55,21 @@ class AuthorController(
         return AuthorResponse.of(created)
     }
 
+    /**
+     * 著者を更新する
+     *
+     * @param paramAuthor 更新する著者
+     * @return 更新後の著者
+     */
+    @PutMapping
+    fun putAuthor(@RequestBody paramAuthor: AuthorUpdateRequest): AuthorResponse {
+        val author = Author.create(
+            id = paramAuthor.id,
+            name = paramAuthor.name,
+            birthDate = paramAuthor.birthDate,
+        )
+        val updated = authorService.update(author)
+
+        return AuthorResponse.of(updated)
+    }
 }

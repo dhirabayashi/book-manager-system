@@ -1,4 +1,4 @@
-package com.github.dhirabayashi.bookmanager.presentation.form
+package com.github.dhirabayashi.bookmanager.presentation.form.book
 
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 

@@ -1,4 +1,4 @@
-package com.github.dhirabayashi.bookmanager.presentation.form
+package com.github.dhirabayashi.bookmanager.presentation.form.author
 
 /**
  * 著者一覧レスポンス

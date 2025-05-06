@@ -29,6 +29,25 @@ class AuthorRepositoryImpl(
         return Author.create(record.id, record.name, record.birthDate)
     }
 
+    override fun update(id: String, author: Author): Author? {
+        // 更新実行
+        val updatedCount = dslContext.update(AUTHORS)
+            .set(AUTHORS.NAME, author.name)
+            .set(AUTHORS.BIRTH_DATE, author.birthDate)
+            .where(AUTHORS.ID.eq(id))
+            .execute()
+
+        return if (updatedCount == 0) {
+            null
+        } else {
+            Author.create(
+                id = id,
+                name = author.name,
+                birthDate = author.birthDate,
+            )
+        }
+    }
+
     override fun findByIds(ids: List<String>): List<Author> {
         return dslContext.select()
             .from(AUTHORS)
