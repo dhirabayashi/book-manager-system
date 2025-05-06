@@ -4,6 +4,7 @@ import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundE
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
+import com.github.dhirabayashi.bookmanager.domain.service.BookDomainService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class BookService(
     private val bookRepository: BookRepository,
     private val authorRepository: AuthorRepository,
+    private val bookDomainService: BookDomainService,
 ) {
     /**
      * 著者に紐づく書籍の一覧を取得する
@@ -71,6 +73,14 @@ class BookService(
     fun update(book: Book): BookWithAuthorsDto {
         require(book.id != null) {
             "書籍IDは必須です"
+        }
+
+        // 出版ステータスのチェック
+        val currentBook = bookRepository.findById(book.id)
+            ?: throw EntityNotFoundException("書籍", book.id)
+
+        require(bookDomainService.canUpdateBook(currentBook, book)) {
+            "出版済みの書籍を未出版に更新することはできません"
         }
 
         // 書籍を更新

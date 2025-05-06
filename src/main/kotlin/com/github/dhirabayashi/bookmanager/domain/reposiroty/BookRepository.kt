@@ -15,6 +15,14 @@ interface BookRepository {
     fun findByAuthorId(authorId: String): List<Book>
 
     /**
+     * IDをもとに書籍を取得する
+     *
+     * @param id 取得対象の書籍ID
+     * @return 書籍。IDに対応する書籍が存在しない場合はnull
+     */
+    fun findById(id: String): Book?
+
+    /**
      * 書籍を登録する
      *
      * @param book 登録する書籍

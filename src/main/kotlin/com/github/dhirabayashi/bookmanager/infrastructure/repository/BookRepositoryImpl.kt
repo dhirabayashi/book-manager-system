@@ -37,6 +37,32 @@ class BookRepositoryImpl(
         }
     }
 
+    override fun findById(id: String): Book? {
+        val bookRecord = dslContext.select()
+            .from(BOOKS)
+            .where(BOOKS.ID.eq(id))
+            .fetch()
+
+        // 主キーでの検索なので実際の結果は0件か1件だが、データとしてはリスト
+        if (bookRecord.isEmpty()) {
+            return null
+        }
+        // データが2件以上ないかどうか一応チェック（起こらない想定）
+        if (bookRecord.size != 1) {
+            throw IllegalStateException()
+        }
+
+        // 著者の一覧
+        val authorIds = dslContext.select()
+            .from(AUTHOR_BOOKS)
+            .where(AUTHOR_BOOKS.BOOK_ID.eq(id))
+            .fetch()
+            .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
+
+        // bookRecordの件数はチェック済なので必ず1件
+        return toModel(bookRecord.first(), authorIds)
+    }
+
     override fun add(book: Book): Book {
         // 書籍の登録
         val bookId = book.id ?: idGenerator.generate()
