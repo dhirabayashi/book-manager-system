@@ -3,12 +3,9 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 import com.github.dhirabayashi.bookmanager.application.service.BookService
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookCreateRequest
-import com.github.dhirabayashi.bookmanager.presentation.form.book.BookListResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookUpdateRequest
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,20 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 class BookController(
     private val bookService: BookService,
 ) {
-    /**
-     * 著者IDをもとに書籍の一覧を取得する
-     *
-     * @param authorId 著者ID
-     * @return 書籍の一覧レスポンス
-     */
-    @GetMapping("/author_id/{author_id}")
-    fun getBooksByAuthorId(@PathVariable("author_id") authorId: String): BookListResponse {
-        val bookList = bookService.retrieveBooksByAuthorId(authorId)
-            .map { BookResponse.of(it) }
-
-        return BookListResponse(bookList)
-    }
-
     /**
      * 書籍を登録する
      *
@@ -70,6 +53,7 @@ class BookController(
     @PutMapping
     fun putBook(@RequestBody paramBook: BookUpdateRequest): BookResponse {
         val book = Book.create(
+            id = paramBook.id,
             title = paramBook.title,
             price = paramBook.price,
             authorIds = paramBook.authorIds,
