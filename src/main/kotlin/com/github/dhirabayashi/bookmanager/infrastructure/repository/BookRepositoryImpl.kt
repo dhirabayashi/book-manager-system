@@ -44,7 +44,7 @@ class BookRepositoryImpl(
             return null
         }
         // データが2件以上ないかどうか一応チェック（起こらない想定）
-        check(bookRecord.size != 1)
+        check(bookRecord.size == 1)
 
         // 著者の一覧
         val authorIds = selectAuthorIds(id)
