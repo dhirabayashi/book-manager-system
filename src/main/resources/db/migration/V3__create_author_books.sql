@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS author_books (
-    book_id VARCHAR(26) NOT NULL REFERENCES books(id),
-    author_id VARCHAR(26) NOT NULL REFERENCES authors(id),
+    book_id VARCHAR(26) NOT NULL REFERENCES books(id) DEFERRABLE INITIALLY DEFERRED,
+    author_id VARCHAR(26) NOT NULL REFERENCES authors(id) DEFERRABLE INITIALLY DEFERRED,
     PRIMARY KEY (book_id, author_id)
 );
 
