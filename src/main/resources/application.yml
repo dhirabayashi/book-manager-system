@@ -11,3 +11,6 @@ spring:
     user: root
     password: root
     driver-class-name: org.postgresql.Driver
+logging:
+  level:
+    org.flywaydb.core: DEBUG
