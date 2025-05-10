@@ -6,11 +6,6 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       auto-commit: false
-  flyway:
-    url: jdbc:postgresql://localhost:5432/postgres
-    user: root
-    password: root
-    driver-class-name: org.postgresql.Driver
 logging:
   level:
     org.flywaydb.core: DEBUG

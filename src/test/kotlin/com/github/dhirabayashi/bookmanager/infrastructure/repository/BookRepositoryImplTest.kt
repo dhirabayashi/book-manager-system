@@ -9,24 +9,20 @@ import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHOR_BOOKS
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOKS
-import com.github.dhirabayashi.bookmanager.test.AbstractTestcontainersTest
+import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
-import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDate
 import kotlin.test.Test
 
-@Testcontainers
-@SpringBootTest
+@SpringBootTest(classes = [TestcontainersConfig::class])
 @Transactional
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BookRepositoryImplTest : AbstractTestcontainersTest() {
+class BookRepositoryImplTest {
 
     @Autowired
     private lateinit var create: DSLContext

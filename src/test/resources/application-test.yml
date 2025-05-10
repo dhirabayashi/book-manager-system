@@ -7,10 +7,6 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    url: ${spring.flyway.url}
-    user: ${spring.flyway.user}
-    password: ${spring.flyway.password}
-    driver-class-name: org.postgresql.Driver
 
 logging:
   level:

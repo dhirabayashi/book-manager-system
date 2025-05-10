@@ -6,7 +6,7 @@ import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
-import com.github.dhirabayashi.bookmanager.test.AbstractTestcontainersTest
+import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -19,14 +19,12 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import org.springframework.transaction.annotation.Transactional
-import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDate
 
-@Testcontainers
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [TestcontainersConfig::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 @AutoConfigureMockMvc
-class BookControllerIntegrationTest : AbstractTestcontainersTest() {
+class BookControllerIntegrationTest {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
