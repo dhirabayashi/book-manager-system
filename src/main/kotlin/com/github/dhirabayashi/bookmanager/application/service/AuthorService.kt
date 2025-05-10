@@ -1,6 +1,8 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
+import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import org.springframework.stereotype.Service
@@ -43,10 +45,11 @@ class AuthorService(
      *
      * @param author 著者の更新データ
      * @return 更新後の著者
+     * @throws ValidationException 著者IDが未指定の場合
      */
     @Transactional(rollbackFor = [Exception::class])
     fun update(author: Author): AuthorDto {
-        require(author.id != null) {
+        validate(author.id != null) {
             "著者IDは必須です"
         }
 

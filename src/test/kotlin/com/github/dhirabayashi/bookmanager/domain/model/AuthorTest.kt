@@ -1,5 +1,6 @@
 package com.github.dhirabayashi.bookmanager.domain.model
 
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -32,7 +33,7 @@ class AuthorTest {
         if (isValid) {
             assertDoesNotThrow(executable)
         } else {
-            assertThrows(IllegalArgumentException::class.java, executable)
+            assertThrows(ValidationException::class.java, executable)
         }
     }
 }

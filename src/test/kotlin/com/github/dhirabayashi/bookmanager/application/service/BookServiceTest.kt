@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
@@ -107,7 +108,7 @@ class BookServiceTest {
         val book = Book.create(null, "Test Book", 1000, listOf("author1"), PublishingStatus.UNPUBLISHED)
 
         assertThatThrownBy { bookService.update(book) }
-            .isInstanceOf(IllegalArgumentException::class.java)
+            .isInstanceOf(ValidationException::class.java)
     }
 
     @Test

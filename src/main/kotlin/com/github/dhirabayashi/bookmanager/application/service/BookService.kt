@@ -1,6 +1,8 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
+import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
@@ -70,10 +72,11 @@ class BookService(
      *
      * @param book 更新する書籍
      * @return 更新された書籍
+     * @throws ValidationException 書籍IDが未指定の場合
      */
     @Transactional(rollbackFor = [Exception::class])
     fun update(book: Book): BookWithAuthorsDto {
-        require(book.id != null) {
+        validate(book.id != null) {
             "書籍IDは必須です"
         }
 
@@ -81,7 +84,7 @@ class BookService(
         val currentBook = bookRepository.findById(book.id)
             ?: throw EntityNotFoundException("書籍", book.id)
 
-        require(bookDomainService.canUpdateBook(currentBook, book)) {
+        validate(bookDomainService.canUpdateBook(currentBook, book)) {
             "出版済みの書籍を未出版に更新することはできません"
         }
 
@@ -106,16 +109,16 @@ class BookService(
      *
      * @param authorIds 取得対象の著者IDリスト
      * @return 著者
-     * @throws EntityNotFoundException 存在しない著者が指定された場合
+     * @throws ValidationException 存在しない著者が指定された場合
      */
     private fun findAuthorsWithCheck(authorIds: List<String>): List<Author> {
         // 著者を取得して返す（著者も取得したほうがAPIとして使いやすいかもしれず、また余分なレスポンス用クラスを作らなくて済む）
         val authors = authorRepository.findByIds(authorIds)
 
         // 存在しない著者が指定されていたらエラー
-        if (authors.size != authorIds.size) {
+        validate(authors.size == authorIds.size) {
             val notExistentAuthorIds = (authorIds - authors.map { it.id }.toSet()).joinToString(", ")
-            throw EntityNotFoundException("著者", notExistentAuthorIds)
+            "著者が存在しません: id[$notExistentAuthorIds]"
         }
 
         return authors

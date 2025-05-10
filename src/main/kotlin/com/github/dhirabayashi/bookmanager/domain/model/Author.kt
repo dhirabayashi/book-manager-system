@@ -1,5 +1,7 @@
 package com.github.dhirabayashi.bookmanager.domain.model
 
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
+import com.github.dhirabayashi.bookmanager.domain.check.validate
 import java.time.Clock
 import java.time.LocalDate
 
@@ -23,7 +25,7 @@ data class Author private constructor(
          * @param name 名前
          * @param birthDate 生年月日
          * @param clock クロック
-         * @throws IllegalArgumentException 生年月日が過去日ではない場合
+         * @throws ValidationException 生年月日が過去日ではない場合
          * @return 生成された著者
          */
         fun create(
@@ -33,7 +35,7 @@ data class Author private constructor(
             clock: Clock = Clock.systemDefaultZone(),
         ): Author {
             // チェック
-            require(birthDate.isBefore(LocalDate.now(clock))) {
+            validate(birthDate.isBefore(LocalDate.now(clock))) {
                 "生年月日は過去日でなければなりません"
             }
 

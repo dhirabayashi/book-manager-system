@@ -1,5 +1,6 @@
 package com.github.dhirabayashi.bookmanager.domain.model
 
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -27,7 +28,7 @@ class BookTest {
         if (isValid) {
             assertDoesNotThrow(executable)
         } else {
-            assertThrows(IllegalArgumentException::class.java, executable)
+            assertThrows(ValidationException::class.java, executable)
         }
     }
 
@@ -47,7 +48,7 @@ class BookTest {
         if (isValid) {
             assertDoesNotThrow(executable)
         } else {
-            assertThrows(IllegalArgumentException::class.java, executable)
+            assertThrows(ValidationException::class.java, executable)
         }
     }
 

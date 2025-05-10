@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.presentation.handler
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
+import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -16,8 +17,8 @@ class GlobalExceptionHandler {
             .body(mapOf("error" to (ex.message ?: "entity not found")))
     }
 
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleBadRequest(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> {
+    @ExceptionHandler(ValidationException::class)
+    fun handleBadRequest(ex: ValidationException): ResponseEntity<Map<String, String>> {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(mapOf("error" to (ex.message ?: "invalid parameter")))
