@@ -22,6 +22,7 @@ class BookRepositoryImpl(
             .join(BOOKS)
             .on(BOOKS.ID.eq(AUTHOR_BOOKS.BOOK_ID))
             .where(AUTHOR_BOOKS.AUTHOR_ID.eq(authorId))
+            .orderBy(AUTHOR_BOOKS.BOOK_ID)
             .fetch()
 
         // 著者が複数いるかもしれないため、書籍ごとに著者を改めて取得する
@@ -124,6 +125,7 @@ class BookRepositoryImpl(
         return create.select()
             .from(AUTHOR_BOOKS)
             .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
+            .orderBy(AUTHOR_BOOKS.AUTHOR_ID)
             .fetch()
             .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
     }

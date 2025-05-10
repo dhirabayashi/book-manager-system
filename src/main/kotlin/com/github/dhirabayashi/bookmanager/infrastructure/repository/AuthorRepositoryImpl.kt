@@ -16,6 +16,7 @@ class AuthorRepositoryImpl(
     override fun findAll(): List<Author> {
         return create.select()
             .from(AUTHORS)
+            .orderBy(AUTHORS.ID)
             .fetch().map { toModel(it) }
     }
 
@@ -52,6 +53,7 @@ class AuthorRepositoryImpl(
         return create.select()
             .from(AUTHORS)
             .where(AUTHORS.ID.`in`(ids))
+            .orderBy(AUTHORS.ID)
             .fetch()
             .map { toModel(it) }
     }

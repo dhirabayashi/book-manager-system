@@ -37,7 +37,6 @@ class AuthorRepositoryImplTest {
         prepareFindAllTestData()
 
         val result = sut.findAll()
-            .sortedBy { it.id }
 
         assertThat(result.size).isEqualTo(3)
 

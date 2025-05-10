@@ -68,7 +68,6 @@ class BookRepositoryImplTest {
         prepareFindByAuthorIdTestData()
 
         val books = sut.findByAuthorId("author1")
-            .sortedBy { it.id }
 
         assertThat(books).hasSize(2)
         assertThat(books[0].title).isEqualTo("Kotlin Basics")
