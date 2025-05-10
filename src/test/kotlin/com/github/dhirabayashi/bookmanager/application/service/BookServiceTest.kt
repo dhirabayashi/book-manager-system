@@ -128,10 +128,12 @@ class BookServiceTest {
     fun updateBook_shouldCallCanUpdateBook() {
         val book = createTestBooks().first()
         val currentBook = book
+        val authors = createTestAuthors(book.authorIds)
 
         whenever(bookRepository.findById(book.id!!)).thenReturn(currentBook)
         whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
         whenever(bookRepository.update(book.id!!, book)).thenReturn(book)
+        whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
 
         // 実行
         bookService.update(book)

@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
+import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
@@ -49,11 +50,12 @@ class BookService(
      */
     @Transactional(rollbackFor = [Exception::class])
     fun add(book: Book): BookWithAuthorsDto {
+        // 著者を取得
+        val authors = findAuthorsWithCheck(book.authorIds)
+
         // 書籍を登録
         val createdBook = bookRepository.add(book)
 
-        // 著者を取得して返す（著者も取得したほうが使いやすいかもしれず、また余分なレスポンス用クラスを作らなくて済む）
-        val authors = authorRepository.findByIds(createdBook.authorIds)
         return BookWithAuthorsDto(
             id = createdBook.id ?: error("IDがnullのレスポンスを返すことはできません"),
             title = createdBook.title,
@@ -83,12 +85,13 @@ class BookService(
             "出版済みの書籍を未出版に更新することはできません"
         }
 
+        // 著者を取得
+        val authors = findAuthorsWithCheck(book.authorIds)
+
         // 書籍を更新
         val updatedBook = bookRepository.update(book.id, book)
             ?: throw EntityNotFoundException("書籍", book.id)
 
-        // 著者を取得して返す（著者も取得したほうが使いやすいかもしれず、また余分なレスポンス用クラスを作らなくて済む）
-        val authors = authorRepository.findByIds(updatedBook.authorIds)
         return BookWithAuthorsDto(
             id = updatedBook.id ?: error("IDがnullのレスポンスを返すことはできません"),
             title = updatedBook.title,
@@ -96,5 +99,25 @@ class BookService(
             authors = authors.map { AuthorDto.of(it) },
             publishingStatus = updatedBook.publishingStatus,
         )
+    }
+
+    /**
+     * 著者を取得する。
+     *
+     * @param authorIds 取得対象の著者IDリスト
+     * @return 著者
+     * @throws EntityNotFoundException 存在しない著者が指定された場合
+     */
+    private fun findAuthorsWithCheck(authorIds: List<String>): List<Author> {
+        // 著者を取得して返す（著者も取得したほうがAPIとして使いやすいかもしれず、また余分なレスポンス用クラスを作らなくて済む）
+        val authors = authorRepository.findByIds(authorIds)
+
+        // 存在しない著者が指定されていたらエラー
+        if (authors.size != authorIds.size) {
+            val notExistentAuthorIds = (authorIds - authors.map { it.id }.toSet()).joinToString(", ")
+            throw EntityNotFoundException("著者", notExistentAuthorIds)
+        }
+
+        return authors
     }
 }
