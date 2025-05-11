@@ -65,14 +65,18 @@ class BookRepositoryImplTest {
     @Test
     @DisplayName("著者に紐づく書籍一覧が取得できること")
     fun findByAuthorId() {
-        prepareFindByAuthorIdTestData()
+        prepareFindTestData()
 
         val books = sut.findByAuthorId("author1")
 
         assertThat(books).hasSize(2)
         assertThat(books[0].title).isEqualTo("Kotlin Basics")
+        assertThat(books[0].price).isEqualTo(2000)
+        assertThat(books[0].publishingStatus).isEqualTo(PublishingStatus.UNPUBLISHED)
         assertThat(books[0].authorIds).containsExactly("author1")
         assertThat(books[1].title).isEqualTo("Advanced Kotlin")
+        assertThat(books[1].price).isEqualTo(2500)
+        assertThat(books[1].publishingStatus).isEqualTo(PublishingStatus.PUBLISHED)
         assertThat(books[1].authorIds).containsExactly("author1")
     }
 
@@ -100,7 +104,9 @@ class BookRepositoryImplTest {
         assertThat(bookRecord!!.get(BOOKS.TITLE)).isEqualTo("Kotlinで学ぶアーキテクチャ")
         assertThat(bookRecord.get(BOOKS.PRICE)).isEqualTo(2500)
 
-        val authorBooks = create.select().from(AUTHOR_BOOKS).where(AUTHOR_BOOKS.BOOK_ID.eq("book1"))
+        val authorBooks = create.select()
+            .from(AUTHOR_BOOKS)
+            .where(AUTHOR_BOOKS.BOOK_ID.eq("book1"))
             .orderBy(AUTHOR_BOOKS.AUTHOR_ID)
             .fetch()
         assertThat(authorBooks.size).isEqualTo(2)
@@ -108,11 +114,28 @@ class BookRepositoryImplTest {
         assertThat(authorBooks[1].get(AUTHOR_BOOKS.AUTHOR_ID)).isEqualTo("author4")
 
         // 余分なデータが更新されてないかも一応確認
-        val anotherBook = create.select().from(BOOKS).where(BOOKS.ID.eq("book2")).fetchOne()
+        val anotherBook = create.select()
+            .from(BOOKS)
+            .where(BOOKS.ID.eq("book2"))
+            .fetchOne()
         assertThat(anotherBook!!.get(BOOKS.TITLE)).isNotEqualTo("Kotlinで学ぶアーキテクチャ")
     }
 
-    private fun prepareFindByAuthorIdTestData() {
+    @Test
+    @DisplayName("指定した書籍が取得できること")
+    fun findById() {
+        prepareFindTestData()
+
+        val book = sut.findById("book1")
+
+        assertThat(book).isNotNull
+        assertThat(book?.title).isEqualTo("Kotlin Basics")
+        assertThat(book?.price).isEqualTo(2000)
+        assertThat(book?.publishingStatus).isEqualTo(PublishingStatus.UNPUBLISHED)
+        assertThat(book?.authorIds).containsExactly("author1")
+    }
+
+    private fun prepareFindTestData() {
         create.insertInto(AUTHORS)
             .columns(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
             .values("author1", "Author One", LocalDate.parse("1989-01-31"))
@@ -123,6 +146,7 @@ class BookRepositoryImplTest {
             .values("author2", "Author Two", LocalDate.parse("1999-04-30"))
             .execute()
 
+        // 取れる
         create.insertInto(BOOKS)
             .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
             .values("book1", "Kotlin Basics", 2000, "UNPUBLISHED")
