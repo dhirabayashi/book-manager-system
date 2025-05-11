@@ -90,7 +90,7 @@ class AuthorRepositoryImplTest {
             birthDate = LocalDate.of(2000, 5, 8),
         )
 
-        val updated = sut.update("author3", updateAuthor)
+        val updated = sut.update(updateAuthor)
 
         assertThat(updated).isEqualTo(updateAuthor)
 

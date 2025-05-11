@@ -37,5 +37,5 @@ interface BookRepository {
      * @param book 書籍の更新データ
      * @return 更新後の書籍
      */
-    fun update(bookId: String, book: Book): Book?
+    fun update(book: Book): Book?
 }

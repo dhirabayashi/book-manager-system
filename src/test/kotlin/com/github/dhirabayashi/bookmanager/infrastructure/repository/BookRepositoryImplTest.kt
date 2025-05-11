@@ -90,7 +90,7 @@ class BookRepositoryImplTest {
         )
 
         // 実行
-        val result = sut.update("book1", updatedBook)
+        val result = sut.update(updatedBook)
 
         // 検証
         assertThat(result).isNotNull

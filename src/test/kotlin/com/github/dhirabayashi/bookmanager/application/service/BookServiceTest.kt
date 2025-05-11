@@ -133,7 +133,7 @@ class BookServiceTest {
 
         whenever(bookRepository.findById(book.id!!)).thenReturn(currentBook)
         whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
-        whenever(bookRepository.update(book.id!!, book)).thenReturn(book)
+        whenever(bookRepository.update(book)).thenReturn(book)
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
 
         // 実行
@@ -156,7 +156,7 @@ class BookServiceTest {
 
         whenever(bookRepository.findById(book.id!!)).thenReturn(currentBook)
         whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
-        whenever(bookRepository.update(book.id!!, book)).thenReturn(book)
+        whenever(bookRepository.update(book)).thenReturn(book)
 
         val authors = createTestAuthors(book.authorIds)
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
@@ -173,7 +173,7 @@ class BookServiceTest {
 
         verify(bookRepository, times(1)).findById(book.id!!)
         verify(bookDomainService, times(1)).canUpdateBook(currentBook, book)
-        verify(bookRepository, times(1)).update(book.id!!, book)
+        verify(bookRepository, times(1)).update(book)
         verify(authorRepository, times(1)).findByIds(book.authorIds)
     }
 

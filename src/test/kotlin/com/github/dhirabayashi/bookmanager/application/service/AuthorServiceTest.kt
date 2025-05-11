@@ -66,7 +66,7 @@ class AuthorServiceTest {
     @DisplayName("更新した著者が返ってくること")
     fun update() {
         val author = Author.create(id = "author1", name = "Updated Author", birthDate = LocalDate.of(1985, 1, 1))
-        whenever(authorRepository.update(author.id!!, author)).thenReturn(author)
+        whenever(authorRepository.update(author)).thenReturn(author)
 
         val result = sut.update(author)
 
@@ -74,7 +74,7 @@ class AuthorServiceTest {
         assertThat(result.name).isEqualTo("Updated Author")
         assertThat(result.birthDate).isEqualTo(LocalDate.of(1985, 1, 1))
 
-        verify(authorRepository, times(1)).update(author.id!!, author)
+        verify(authorRepository, times(1)).update(author)
     }
 
     @Test
@@ -82,12 +82,12 @@ class AuthorServiceTest {
     fun update_notFound() {
         val author =
             Author.create(id = "nonexistent", name = "Nonexistent Author", birthDate = LocalDate.of(1985, 1, 1))
-        whenever(authorRepository.update(author.id!!, author)).thenReturn(null)
+        whenever(authorRepository.update(author)).thenReturn(null)
 
         assertThrows<EntityNotFoundException> {
             sut.update(author)
         }
 
-        verify(authorRepository, times(1)).update(author.id!!, author)
+        verify(authorRepository, times(1)).update(author)
     }
 }

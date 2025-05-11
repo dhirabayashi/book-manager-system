@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
+import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
@@ -30,19 +31,23 @@ class AuthorRepositoryImpl(
         return Author.create(record.id, record.name, record.birthDate)
     }
 
-    override fun update(id: String, author: Author): Author? {
+    override fun update(author: Author): Author? {
+        validate(author.id != null) {
+            "著者IDは必須です"
+        }
+
         // 更新実行
         val updatedCount = create.update(AUTHORS)
             .set(AUTHORS.NAME, author.name)
             .set(AUTHORS.BIRTH_DATE, author.birthDate)
-            .where(AUTHORS.ID.eq(id))
+            .where(AUTHORS.ID.eq(author.id))
             .execute()
 
         return if (updatedCount == 0) {
             null
         } else {
             Author.create(
-                id = id,
+                id = author.id,
                 name = author.name,
                 birthDate = author.birthDate,
             )

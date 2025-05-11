@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
+import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
@@ -74,13 +75,17 @@ class BookRepositoryImpl(
         )
     }
 
-    override fun update(bookId: String, book: Book): Book? {
+    override fun update(book: Book): Book? {
+        validate(book.id != null) {
+            "書籍IDは必須です"
+        }
+
         // 書籍の更新
         val updateCount = create.update(BOOKS)
             .set(BOOKS.TITLE, book.title)
             .set(BOOKS.PRICE, book.price)
             .set(BOOKS.PUBLISHING_STATUS, book.publishingStatus.name)
-            .where(BOOKS.ID.eq(bookId))
+            .where(BOOKS.ID.eq(book.id))
             .execute()
 
         if (updateCount == 0) {
@@ -92,10 +97,10 @@ class BookRepositoryImpl(
 
         // 件数自体変わってるかもしれないため、DELETEとINSERTを使う
         create.delete(AUTHOR_BOOKS)
-            .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
+            .where(AUTHOR_BOOKS.BOOK_ID.eq(book.id))
             .execute()
 
-        insertAuthorBooks(bookId, book)
+        insertAuthorBooks(book.id, book)
 
         return book
     }

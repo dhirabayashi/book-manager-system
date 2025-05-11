@@ -92,7 +92,7 @@ class BookService(
         val authors = findAuthorsWithCheck(book.authorIds)
 
         // 書籍を更新
-        val updatedBook = bookRepository.update(book.id, book)
+        val updatedBook = bookRepository.update(book)
             ?: throw EntityNotFoundException("書籍", book.id)
 
         return BookWithAuthorsDto(

@@ -53,7 +53,7 @@ class AuthorService(
             "著者IDは必須です"
         }
 
-        val updated = authorRepository.update(author.id, author)
+        val updated = authorRepository.update(author)
             ?: throw EntityNotFoundException("著者", author.id)
 
         return AuthorDto.of(updated)
