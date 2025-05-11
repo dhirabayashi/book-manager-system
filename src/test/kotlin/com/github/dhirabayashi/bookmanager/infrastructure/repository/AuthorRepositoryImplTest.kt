@@ -34,8 +34,9 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("全ての著者が取得できること")
     fun findAll() {
-        prepareFindAllTestData()
+        prepareTestData()
 
+        // 実行
         val result = sut.findAll()
 
         assertThat(result.size).isEqualTo(3)
@@ -62,12 +63,15 @@ class AuthorRepositoryImplTest {
             birthDate = LocalDate.of(1978, 4, 5)
         )
 
+        // 実行
         val added = sut.add(author)
 
+        // レスポンスの検証
         assertThat(added.id).isEqualTo(author.id)
         assertThat(added.name).isEqualTo(author.name)
         assertThat(added.birthDate).isEqualTo(author.birthDate)
 
+        // DB上のデータと一致しているか検証
         val actual = create.select()
             .from(AUTHORS)
             .where(AUTHORS.ID.eq(author.id))
@@ -82,7 +86,7 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("著者を更新できること")
     fun update() {
-        prepareFindAllTestData()
+        prepareTestData()
 
         val updateAuthor = Author.create(
             id = "author3",
@@ -90,10 +94,13 @@ class AuthorRepositoryImplTest {
             birthDate = LocalDate.of(2000, 5, 8),
         )
 
+        // 実行
         val updated = sut.update(updateAuthor)
 
+        // レスポンスの検証
         assertThat(updated).isEqualTo(updateAuthor)
 
+        // DB上のデータと一致しているか検証
         val actual = create.select()
             .from(AUTHORS)
             .where(AUTHORS.ID.eq(updateAuthor.id))
@@ -104,7 +111,28 @@ class AuthorRepositoryImplTest {
         assertThat(actual[0]).isEqualTo(updateAuthor)
     }
 
-    private fun prepareFindAllTestData() {
+    @Test
+    @DisplayName("指定した著者が取得できること")
+    fun findByIds() {
+        prepareTestData()
+
+        val authorIds = listOf("author1", "author3")
+
+        // 実行
+        val result = sut.findByIds(authorIds)
+
+        assertThat(result.size).isEqualTo(2)
+
+        assertThat(result[0].id).isEqualTo("author1")
+        assertThat(result[0].name).isEqualTo("Author1")
+        assertThat(result[0].birthDate).isEqualTo(LocalDate.of(1980, 1, 1))
+
+        assertThat(result[1].id).isEqualTo("author3")
+        assertThat(result[1].name).isEqualTo("Author3")
+        assertThat(result[1].birthDate).isEqualTo(LocalDate.of(1980, 1, 3))
+    }
+
+    private fun prepareTestData() {
         create.insertInto(AUTHORS)
             .columns(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
             .values("author1", "Author1", LocalDate.of(1980, 1, 1))
