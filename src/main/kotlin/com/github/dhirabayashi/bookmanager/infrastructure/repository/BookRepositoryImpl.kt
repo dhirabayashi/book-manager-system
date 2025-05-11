@@ -18,7 +18,7 @@ class BookRepositoryImpl(
 ) : BookRepository {
     override fun findByAuthorId(authorId: String): List<Book> {
         // 書籍の一覧
-        val books = create.select()
+        val books = create.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
             .from(AUTHOR_BOOKS)
             .join(BOOKS)
             .on(BOOKS.ID.eq(AUTHOR_BOOKS.BOOK_ID))
@@ -36,7 +36,7 @@ class BookRepositoryImpl(
     }
 
     override fun findById(id: String): Book? {
-        val bookRecord = create.select()
+        val bookRecord = create.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
             .from(BOOKS)
             .where(BOOKS.ID.eq(id))
             .fetch()
@@ -127,7 +127,7 @@ class BookRepositoryImpl(
      * @return 著者IDリスト
      */
     private fun selectAuthorIds(bookId: String): List<String> {
-        return create.select()
+        return create.select(AUTHOR_BOOKS.AUTHOR_ID)
             .from(AUTHOR_BOOKS)
             .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
             .orderBy(AUTHOR_BOOKS.AUTHOR_ID)

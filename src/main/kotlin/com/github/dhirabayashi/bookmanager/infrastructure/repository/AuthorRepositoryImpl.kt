@@ -15,7 +15,7 @@ class AuthorRepositoryImpl(
     private val idGenerator: IdGenerator,
 ) : AuthorRepository {
     override fun findAll(): List<Author> {
-        return create.select()
+        return create.select(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
             .from(AUTHORS)
             .orderBy(AUTHORS.ID)
             .fetch().map { toModel(it) }
@@ -55,7 +55,7 @@ class AuthorRepositoryImpl(
     }
 
     override fun findByIds(ids: List<String>): List<Author> {
-        return create.select()
+        return create.select(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
             .from(AUTHORS)
             .where(AUTHORS.ID.`in`(ids))
             .orderBy(AUTHORS.ID)
