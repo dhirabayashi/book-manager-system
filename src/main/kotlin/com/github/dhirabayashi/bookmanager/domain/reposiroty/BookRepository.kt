@@ -25,7 +25,7 @@ interface BookRepository {
     /**
      * 書籍を登録する
      *
-     * @param book 登録する書籍
+     * @param book 登録する書籍。IDが指定されている場合はそれを使用する。未指定の場合は自動採番する
      * @return 登録された書籍
      */
     fun add(book: Book): Book
@@ -33,8 +33,7 @@ interface BookRepository {
     /**
      * 書籍を更新する
      *
-     * @param bookId 書籍ID
-     * @param book 書籍の更新データ
+     * @param book 書籍の更新データ。IDは指定する必要がある。
      * @return 更新後の書籍
      */
     fun update(book: Book): Book?

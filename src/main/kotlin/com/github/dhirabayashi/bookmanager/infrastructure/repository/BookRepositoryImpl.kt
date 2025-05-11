@@ -64,7 +64,7 @@ class BookRepositoryImpl(
             .execute()
 
         // 書籍と著者のリレーションの登録
-        insertAuthorBooks(bookId, book)
+        insertAuthorBooks(bookId, book.authorIds)
 
         return Book.create(
             id = bookId,
@@ -100,7 +100,7 @@ class BookRepositoryImpl(
             .where(AUTHOR_BOOKS.BOOK_ID.eq(book.id))
             .execute()
 
-        insertAuthorBooks(book.id, book)
+        insertAuthorBooks(book.id, book.authorIds)
 
         return book
     }
@@ -139,11 +139,11 @@ class BookRepositoryImpl(
      * 著者と書籍のリレーションを登録する
      *
      * @param bookId 書籍ID
-     * @param book 書籍
+     * @param authorIds 著者IDリスト
      */
-    private fun insertAuthorBooks(bookId: String, book: Book) {
+    private fun insertAuthorBooks(bookId: String, authorIds: List<String>) {
         create.batch(
-            book.authorIds.map { authorId ->
+            authorIds.map { authorId ->
                 create.insertInto(AUTHOR_BOOKS)
                     .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
                     .values(authorId, bookId)

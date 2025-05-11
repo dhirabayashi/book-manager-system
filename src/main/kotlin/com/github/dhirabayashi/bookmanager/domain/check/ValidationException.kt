@@ -10,6 +10,7 @@ class ValidationException(message: String) : RuntimeException(message)
  *
  * @param condition 検証条件
  * @param messageProvider エラーメッセージ生成関数
+ * @throws ValidationException 検証条件を満たさない場合
  */
 @OptIn(ExperimentalContracts::class)
 inline fun validate(condition: Boolean, messageProvider: () -> String) {

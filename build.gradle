@@ -17,9 +17,6 @@ plugins {
     id 'org.jooq.jooq-codegen-gradle' version '3.19.23'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)

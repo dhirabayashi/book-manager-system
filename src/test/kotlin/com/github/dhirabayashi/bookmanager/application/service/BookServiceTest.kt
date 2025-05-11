@@ -1,7 +1,6 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
-import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
@@ -69,7 +68,7 @@ class BookServiceTest {
 
 
     @Test
-    @DisplayName("書籍を登録できること")
+    @DisplayName("追加処理が呼び出され、追加された書籍が返ってくること")
     fun addBook() {
         // テストデータ準備
         val book = createTestBooks().first()
@@ -143,7 +142,7 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("書籍を更新できること")
+    @DisplayName("更新処理が呼び出され、更新された書籍が返ってくること")
     fun updateBook_shouldUpdateBook() {
         val book = createTestBooks().last()
         val currentBook = Book.create(

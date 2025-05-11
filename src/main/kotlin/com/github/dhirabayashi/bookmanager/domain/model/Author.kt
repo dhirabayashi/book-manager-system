@@ -24,7 +24,7 @@ data class Author private constructor(
          * @param id 著者ID。未採番の場合はnull
          * @param name 名前
          * @param birthDate 生年月日
-         * @param clock クロック
+         * @param clock クロック。テストから使うことを想定
          * @throws ValidationException 生年月日が過去日ではない場合
          * @return 生成された著者
          */

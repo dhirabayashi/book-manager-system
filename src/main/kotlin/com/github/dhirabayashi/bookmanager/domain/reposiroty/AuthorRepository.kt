@@ -16,7 +16,7 @@ interface AuthorRepository {
     /**
      * 著者を登録する
      *
-     * @param author 登録する著者
+     * @param author 登録する著者。IDが指定されている場合はそれを使用する。未指定の場合は自動採番する
      * @return 登録した著者情報
      */
     fun add(author: Author): Author
@@ -24,7 +24,7 @@ interface AuthorRepository {
     /**
      * 著者を更新する
      *
-     * @param author 著者の更新データ
+     * @param author 著者の更新データ。IDは指定する必要がある。
      * @return 更新後の著者情報。IDに対応するデータがなく更新しなかった場合はnull
      */
     fun update(author: Author): Author?

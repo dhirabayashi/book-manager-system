@@ -48,7 +48,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("追加された著者が返ってくること")
+    @DisplayName("追加処理が呼び出され、追加された著者が返ってくること")
     fun add() {
         val author = Author.create(id = "id", name = "Author Two", birthDate = LocalDate.of(1980, 1, 1))
         whenever(authorRepository.add(author)).thenReturn(author)
@@ -63,7 +63,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    @DisplayName("更新した著者が返ってくること")
+    @DisplayName("更新処理が呼び出され、更新した著者が返ってくること")
     fun update() {
         val author = Author.create(id = "author1", name = "Updated Author", birthDate = LocalDate.of(1985, 1, 1))
         whenever(authorRepository.update(author)).thenReturn(author)
