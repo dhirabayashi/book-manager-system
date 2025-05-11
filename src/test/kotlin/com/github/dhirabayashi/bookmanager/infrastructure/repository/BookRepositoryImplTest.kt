@@ -113,37 +113,47 @@ class BookRepositoryImplTest {
     }
 
     private fun prepareFindByAuthorIdTestData() {
-        create.execute("INSERT INTO authors (id, name, birth_date) VALUES ('author1', 'Author One', '1989-01-31')")
-        create.execute("INSERT INTO authors (id, name, birth_date) VALUES ('author2', 'Author Two', '1999-04-30')")
+        create.insertInto(AUTHORS)
+            .columns(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+            .values("author1", "Author One", LocalDate.parse("1989-01-31"))
+            .execute()
+
+        create.insertInto(AUTHORS)
+            .columns(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+            .values("author2", "Author Two", LocalDate.parse("1999-04-30"))
+            .execute()
+
+        create.insertInto(BOOKS)
+            .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
+            .values("book1", "Kotlin Basics", 2000, "UNPUBLISHED")
+            .execute()
 
         // 取れる
-        create.execute(
-            """
-            INSERT INTO books (id, title, price, publishing_status)
-             VALUES ('book1', 'Kotlin Basics', 2000, 'UNPUBLISHED')
-             """
-                .trimIndent()
-        )
-        // 取れる
-        create.execute(
-            """
-            INSERT INTO books (id, title, price, publishing_status)
-             VALUES ('book2', 'Advanced Kotlin', 2500, 'PUBLISHED')
-             """
-                .trimIndent()
-        )
+        create.insertInto(BOOKS)
+            .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
+            .values("book2", "Advanced Kotlin", 2500, "PUBLISHED")
+            .execute()
+
         // 取れない
-        create.execute(
-            """
-            INSERT INTO books (id, title, price, publishing_status)
-             VALUES ('book3', 'Kotlin Ultimate', 9900, 'PUBLISHED')
-             """
-                .trimIndent()
-        )
+        create.insertInto(BOOKS)
+            .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
+            .values("book3", "Kotlin Ultimate", 9900, "PUBLISHED")
+            .execute()
 
-        create.execute("INSERT INTO author_books (author_id, book_id) VALUES ('author1', 'book1')")
-        create.execute("INSERT INTO author_books (author_id, book_id) VALUES ('author1', 'book2')")
-        create.execute("INSERT INTO author_books (author_id, book_id) VALUES ('author2', 'book3')")
+        create.insertInto(AUTHOR_BOOKS)
+            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+            .values("author1", "book1")
+            .execute()
+
+        create.insertInto(AUTHOR_BOOKS)
+            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+            .values("author1", "book2")
+            .execute()
+
+        create.insertInto(AUTHOR_BOOKS)
+            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
+            .values("author2", "book3")
+            .execute()
     }
 
     private fun prepareUpdateTestData() {
