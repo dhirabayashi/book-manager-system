@@ -112,3 +112,15 @@ tasks.named("jooqCodegen") {
     dependsOn(tasks.named("flywayMigrate"))
     inputs.files(fileTree("src/main/resources/db/migration"))
 }
+
+tasks.named("flywayMigrate") {
+    dependsOn(tasks.named("composeUp"))
+}
+
+tasks.named("test") {
+    finalizedBy("composeDown")
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
