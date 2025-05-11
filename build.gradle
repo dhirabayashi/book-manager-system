@@ -114,10 +114,6 @@ tasks.named("flywayMigrate") {
     dependsOn(tasks.named("composeUp"))
 }
 
-tasks.named("test") {
-    finalizedBy("composeDown")
-}
-
 jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
