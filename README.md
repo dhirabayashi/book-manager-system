@@ -132,7 +132,6 @@ curl -X PUT http://localhost:8080/books \
 * N+1問題の考慮
 * GitHub Actionsなどの設定
 * 各種設定値の環境ごとの管理
-* 厳密なバリデーション
 * Version Catalogなどを使った厳密な依存管理
 * メトリクス
 * OpenAPIなどを使ったAPI定義の管理
