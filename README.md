@@ -30,10 +30,10 @@ cd book-manager-system
 
 #### 著者API
 
-- **`GET /authors/list`** - すべての著者を取得。書籍の登録のために著者IDを知るために使用する。
-- **`GET /authors/{author_id}/books`** - 特定の著者の書籍一覧を取得
 - **`POST /authors`** - 著者を登録
 - **`PUT /authors`** - 著者を更新
+- **`GET /authors/list`** - すべての著者を取得。書籍の登録のために著者IDを知るために使用する。
+- **`GET /authors/{author_id}/books`** - 特定の著者の書籍一覧を取得
 
 ---
 
@@ -51,6 +51,69 @@ cd book-manager-system
 ```
 
 ---
+
+### テスト例（curl）
+
+#### 著者API
+
+```bash
+# 著者の登録
+curl -X POST http://localhost:8080/authors \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "John Smith",
+    "birthDate": "1985-03-10"
+}'
+
+# 著者の更新
+curl -X PUT http://localhost:8080/authors \
+-H "Content-Type: application/json" \
+-d '{
+    "id": "author1",
+    "name": "John Smith Jr.",
+    "birthDate": "1985-03-10"
+}'
+
+# 著者一覧の取得
+curl -X GET http://localhost:8080/authors/list
+
+# 特定の著者の書籍一覧を取得
+curl -X GET http://localhost:8080/authors/author1/books
+```
+
+---
+
+#### 書籍API
+
+```bash
+# 書籍の登録
+curl -X POST http://localhost:8080/books \
+-H "Content-Type: application/json" \
+-d '{
+    "title": "Mastering Kotlin",
+    "price": 3000,
+    "authorIds": ["author1"],
+    "publishingStatus": "PUBLISHED"
+}'
+
+# 書籍の更新
+curl -X PUT http://localhost:8080/books \
+-H "Content-Type: application/json" \
+-d '{
+    "id": "book3",
+    "title": "Mastering Kotlin - Revised Edition",
+    "price": 3500,
+    "authorIds": ["author1"],
+    "publishingStatus": "PUBLISHED"
+}'
+```
+
+---
+
+### 補足
+
+* **localhost:8080** は、アプリケーションがローカルで起動していることを想定しています。
+* もしDocker Composeで起動している場合、`localhost` を適切なホスト名に変更してください。
 
 ### あえてやっていないこと
 
