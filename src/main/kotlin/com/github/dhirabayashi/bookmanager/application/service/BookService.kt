@@ -5,6 +5,7 @@ import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.domain.service.BookDomainService
@@ -35,7 +36,7 @@ class BookService(
             val authors = authorRepository.findByIds(book.authorIds)
 
             BookWithAuthorsDto(
-                id = book.id ?: error("IDがnullのレスポンスを返すことはできません"),
+                id = book.id,
                 title = book.title,
                 price = book.price,
                 authors = authors.map { AuthorDto.of(it) },
@@ -51,7 +52,7 @@ class BookService(
      * @return 登録された書籍
      */
     @Transactional(rollbackFor = [Exception::class])
-    fun add(book: Book): BookWithAuthorsDto {
+    fun add(book: DraftBook): BookWithAuthorsDto {
         // 著者を取得
         val authors = findAuthorsWithCheck(book.authorIds)
 
@@ -59,7 +60,7 @@ class BookService(
         val createdBook = bookRepository.add(book)
 
         return BookWithAuthorsDto(
-            id = createdBook.id ?: error("IDがnullのレスポンスを返すことはできません"),
+            id = createdBook.id,
             title = createdBook.title,
             price = createdBook.price,
             authors = authors.map { AuthorDto.of(it) },
@@ -76,10 +77,6 @@ class BookService(
      */
     @Transactional(rollbackFor = [Exception::class])
     fun update(book: Book): BookWithAuthorsDto {
-        validate(book.id != null) {
-            "書籍IDは必須です"
-        }
-
         // 出版ステータスのチェック
         val currentBook = bookRepository.findById(book.id)
             ?: throw EntityNotFoundException("書籍", book.id)
@@ -96,7 +93,7 @@ class BookService(
             ?: throw EntityNotFoundException("書籍", book.id)
 
         return BookWithAuthorsDto(
-            id = updatedBook.id ?: error("IDがnullのレスポンスを返すことはできません"),
+            id = updatedBook.id,
             title = updatedBook.title,
             price = updatedBook.price,
             authors = authors.map { AuthorDto.of(it) },

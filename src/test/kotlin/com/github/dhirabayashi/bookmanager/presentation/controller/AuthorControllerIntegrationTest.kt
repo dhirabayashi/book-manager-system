@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
@@ -40,31 +42,34 @@ class AuthorControllerIntegrationTest {
     @Autowired
     private lateinit var bookRepository: BookRepository
 
+    private lateinit var author1: Author
+    private lateinit var author2: Author
+    private lateinit var book1: Book
+    private lateinit var book2: Book
+
     @BeforeEach
     fun setUp() {
-        val author1 = Author.create(id = "author1", name = "Author One", birthDate = LocalDate.of(1990, 1, 1))
-        val author2 = Author.create(id = "author2", name = "Author Two", birthDate = LocalDate.of(1995, 5, 10))
-        authorRepository.add(author1)
-        authorRepository.add(author2)
+        val draftAuthor1 = DraftAuthor.create(name = "Author One", birthDate = LocalDate.of(1990, 1, 1))
+        val draftAuthor2 = DraftAuthor.create(name = "Author Two", birthDate = LocalDate.of(1995, 5, 10))
+        author1 = authorRepository.add(draftAuthor1)
+        author2 = authorRepository.add(draftAuthor2)
 
-        val book1 = Book.create(
-            id = "book1",
+        val draftBook1 = DraftBook.create(
             title = "Test Book 1",
             price = 1000,
-            authorIds = listOf("author1"),
+            authorIds = listOf(author1.id),
             publishingStatus = PublishingStatus.UNPUBLISHED
         )
 
-        val book2 = Book.create(
-            id = "book2",
+        val draftBook2 = DraftBook.create(
             title = "Test Book 2",
             price = 1500,
-            authorIds = listOf("author1", "author2"),
+            authorIds = listOf(author1.id, author2.id),
             publishingStatus = PublishingStatus.PUBLISHED
         )
 
-        bookRepository.add(book1)
-        bookRepository.add(book2)
+        book1 = bookRepository.add(draftBook1)
+        book2 = bookRepository.add(draftBook2)
     }
 
     @Test
@@ -73,10 +78,10 @@ class AuthorControllerIntegrationTest {
         mockMvc.get("/authors/list")
             .andExpect { status { isOk() } }
             .andExpect { jsonPath("$.authors").isArray }
-            .andExpect { jsonPath("$.authors[0].id").value("author1") }
+            .andExpect { jsonPath("$.authors[0].id").value(author1.id) }
             .andExpect { jsonPath("$.authors[0].name").value("Author One") }
             .andExpect { jsonPath("$.authors[0].birthDate").value("1990-01-01") }
-            .andExpect { jsonPath("$.authors[1].id").value("author2") }
+            .andExpect { jsonPath("$.authors[1].id").value(author2.id) }
             .andExpect { jsonPath("$.authors[1].name").value("Author Two") }
             .andExpect { jsonPath("$.authors[1].birthDate").value("1995-05-10") }
     }
@@ -84,14 +89,14 @@ class AuthorControllerIntegrationTest {
     @Test
     @DisplayName("著者IDをもとに書籍の一覧を取得できること")
     fun getBooksByAuthorId() {
-        mockMvc.get("/authors/{author_id}/books", "author1")
+        mockMvc.get("/authors/{author_id}/books", author1.id)
             .andExpect { status { isOk() } }
             .andExpect { jsonPath("$.books").isArray }
-            .andExpect { jsonPath("$.books[0].id").value("book1") }
+            .andExpect { jsonPath("$.books[0].id").value(book1.id) }
             .andExpect { jsonPath("$.books[0].title").value("Test Book 1") }
             .andExpect { jsonPath("$.books[0].price").value(1000) }
             .andExpect { jsonPath("$.books[0].publishingStatus").value("UNPUBLISHED") }
-            .andExpect { jsonPath("$.books[0].authors[0].id").value("author1") }
+            .andExpect { jsonPath("$.books[0].authors[0].id").value(author1.id) }
             .andExpect { jsonPath("$.books[0].authors[0].name").value("Author One") }
             .andExpect { jsonPath("$.books[0].authors[0].birthDate").value("1990-01-01") }
     }
@@ -126,7 +131,7 @@ class AuthorControllerIntegrationTest {
     @Test
     @DisplayName("著者を更新できること")
     fun putAuthor() {
-        val authorId = "author1"
+        val authorId = author1.id
         val request = mapOf("id" to authorId, "name" to "Updated Author", "birthDate" to "2000-01-01")
 
         // 実行

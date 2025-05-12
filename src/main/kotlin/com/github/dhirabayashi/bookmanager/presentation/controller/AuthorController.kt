@@ -3,6 +3,7 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 import com.github.dhirabayashi.bookmanager.application.service.AuthorService
 import com.github.dhirabayashi.bookmanager.application.service.BookService
 import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorCreateRequest
 import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorListResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.author.AuthorResponse
@@ -66,7 +67,7 @@ class AuthorController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun postAuthor(@RequestBody paramAuthor: AuthorCreateRequest): AuthorResponse {
-        val author = Author.create(
+        val author = DraftAuthor.create(
             name = paramAuthor.name,
             birthDate = paramAuthor.birthDate,
         )

@@ -1,9 +1,9 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
-import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHOR_BOOKS
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOKS
@@ -55,9 +55,9 @@ class BookRepositoryImpl(
         return toModel(bookRecord.first(), authorIds)
     }
 
-    override fun add(book: Book): Book {
+    override fun add(book: DraftBook): Book {
         // 書籍の登録
-        val bookId = book.id ?: idGenerator.generate()
+        val bookId = idGenerator.generate()
         create.insertInto(BOOKS)
             .columns(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
             .values(bookId, book.title, book.price, book.publishingStatus.name)
@@ -76,10 +76,6 @@ class BookRepositoryImpl(
     }
 
     override fun update(book: Book): Book? {
-        validate(book.id != null) {
-            "書籍IDは必須です"
-        }
-
         // 書籍の更新
         val updateCount = create.update(BOOKS)
             .set(BOOKS.TITLE, book.title)

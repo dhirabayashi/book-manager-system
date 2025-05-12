@@ -27,7 +27,7 @@ class AuthorValidatorTest {
         val birthDate = LocalDate.parse(birthDateStr)
 
         val executable: () -> Unit = {
-            val author = Author.create(name = "Test Author", birthDate = birthDate, clock = clock)
+            val author = Author.create(id = "id", name = "Test Author", birthDate = birthDate, clock = clock)
             AuthorValidator.executeValidate(author, clock)
         }
 

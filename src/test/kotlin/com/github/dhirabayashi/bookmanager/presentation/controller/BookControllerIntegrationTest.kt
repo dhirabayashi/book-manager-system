@@ -3,7 +3,8 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
-import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
@@ -38,12 +39,15 @@ class BookControllerIntegrationTest {
     @Autowired
     private lateinit var authorRepository: AuthorRepository
 
+    private lateinit var author1: Author
+    private lateinit var author2: Author
+
     @BeforeEach
     fun setUp() {
-        val author1 = Author.create(id = "author1", name = "Author One", birthDate = LocalDate.of(1990, 1, 1))
-        val author2 = Author.create(id = "author2", name = "Author Two", birthDate = LocalDate.of(1995, 5, 10))
-        authorRepository.add(author1)
-        authorRepository.add(author2)
+        val draftAuthor1 = DraftAuthor.create(name = "Author One", birthDate = LocalDate.of(1990, 1, 1))
+        val draftAuthor2 = DraftAuthor.create(name = "Author Two", birthDate = LocalDate.of(1995, 5, 10))
+        author1 = authorRepository.add(draftAuthor1)
+        author2 = authorRepository.add(draftAuthor2)
     }
 
     @Test
@@ -52,7 +56,7 @@ class BookControllerIntegrationTest {
         val request = mapOf(
             "title" to "New Book",
             "price" to 2000,
-            "authorIds" to listOf("author1"),
+            "authorIds" to listOf(author1.id),
             "publishingStatus" to "UNPUBLISHED"
         )
 
@@ -72,60 +76,56 @@ class BookControllerIntegrationTest {
         assertThat(savedBook?.title).isEqualTo("New Book")
         assertThat(savedBook?.price).isEqualTo(2000)
         assertThat(savedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
-        assertThat(savedBook?.authorIds).containsExactly("author1")
+        assertThat(savedBook?.authorIds).containsExactly(author1.id)
 
         // レスポンスとDBの内容が一致しているか確認
         assertThat(savedBook?.id).isEqualTo(registeredBookId)
         assertThat(savedBook?.title).isEqualTo("New Book")
         assertThat(savedBook?.price).isEqualTo(2000)
         assertThat(savedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
-        assertThat(savedBook?.authorIds).containsExactly("author1")
+        assertThat(savedBook?.authorIds).containsExactly(author1.id)
     }
 
     @Test
     @DisplayName("書籍を更新できること")
     fun putBook() {
-        val bookId = "book1"
-        bookRepository.add(
-            Book.create(
-                id = bookId,
+        val book = bookRepository.add(
+            DraftBook.create(
                 title = "Old Book",
                 price = 1000,
-                authorIds = listOf("author1"),
+                authorIds = listOf(author1.id),
                 publishingStatus = PublishingStatus.UNPUBLISHED
             )
         )
 
         val request = mapOf(
-            "id" to bookId,
+            "id" to book.id,
             "title" to "Updated Book",
             "price" to 2500,
-            "authorIds" to listOf("author1", "author2"),
+            "authorIds" to listOf(author1.id, author2.id),
             "publishingStatus" to "PUBLISHED"
         )
 
         // 実行
-        val result = mockMvc.put("/books") {
+        mockMvc.put("/books") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(request)
         }.andExpect { status { isOk() } }
             .andReturn()
 
-        val responseContent = result.response.contentAsString
-
         // 実際にDBに更新されているか確認
-        val updatedBook = bookRepository.findById(bookId)
+        val updatedBook = bookRepository.findById(book.id)
         assertThat(updatedBook).isNotNull
         assertThat(updatedBook?.title).isEqualTo("Updated Book")
         assertThat(updatedBook?.price).isEqualTo(2500)
         assertThat(updatedBook?.publishingStatus?.name).isEqualTo("PUBLISHED")
-        assertThat(updatedBook?.authorIds).containsExactly("author1", "author2")
+        assertThat(updatedBook?.authorIds).containsExactly(author1.id, author2.id)
 
         // レスポンスとDBの内容が一致しているか確認
-        assertThat(updatedBook?.id).isEqualTo(bookId)
+        assertThat(updatedBook?.id).isEqualTo(book.id)
         assertThat(updatedBook?.title).isEqualTo("Updated Book")
         assertThat(updatedBook?.price).isEqualTo(2500)
         assertThat(updatedBook?.publishingStatus?.name).isEqualTo("PUBLISHED")
-        assertThat(updatedBook?.authorIds).containsExactly("author1", "author2")
+        assertThat(updatedBook?.authorIds).containsExactly(author1.id, author2.id)
     }
 }

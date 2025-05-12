@@ -12,6 +12,7 @@ class BookTest {
     fun validate() {
         assertThrows<ValidationException> {
             Book.create(
+                id = "id",
                 title = "Test Book",
                 price = -1,
                 authorIds = listOf("author1"),

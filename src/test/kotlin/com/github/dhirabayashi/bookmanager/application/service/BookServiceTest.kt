@@ -1,10 +1,10 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
-import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.domain.service.BookDomainService
@@ -80,15 +80,21 @@ class BookServiceTest {
             authorIds = book.authorIds,
             publishingStatus = book.publishingStatus
         )
+        val draftBook = DraftBook.create(
+            title = book.title,
+            price = book.price,
+            authorIds = book.authorIds,
+            publishingStatus = book.publishingStatus
+        )
 
         val authors = createTestAuthors(book.authorIds)
 
         // モック設定
-        whenever(bookRepository.add(book)).thenReturn(createdBook)
+        whenever(bookRepository.add(draftBook)).thenReturn(createdBook)
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
 
         // 実行
-        val result = bookService.add(book)
+        val result = bookService.add(draftBook)
 
         // 検証
         assertBook(result, createdBook)
@@ -98,17 +104,8 @@ class BookServiceTest {
             assertAuthor(authorDto, authors[index])
         }
 
-        verify(bookRepository, times(1)).add(book)
+        verify(bookRepository, times(1)).add(draftBook)
         verify(authorRepository, times(1)).findByIds(book.authorIds)
-    }
-
-    @Test
-    @DisplayName("ID未指定で更新を実行した場合は例外が投げられること")
-    fun updateBook_shouldThrowExceptionWhenIdIsNull() {
-        val book = Book.create(null, "Test Book", 1000, listOf("author1"), PublishingStatus.UNPUBLISHED)
-
-        assertThatThrownBy { bookService.update(book) }
-            .isInstanceOf(ValidationException::class.java)
     }
 
     @Test
@@ -116,12 +113,12 @@ class BookServiceTest {
     fun updateBook_shouldThrowExceptionWhenBookNotFound() {
         val book = Book.create("nonexistence", "Test Book", 1000, listOf("author1"), PublishingStatus.UNPUBLISHED)
 
-        whenever(bookRepository.findById(book.id!!)).thenReturn(null)
+        whenever(bookRepository.findById(book.id)).thenReturn(null)
 
         assertThatThrownBy { bookService.update(book) }
             .isInstanceOf(EntityNotFoundException::class.java)
 
-        verify(bookRepository, times(1)).findById(book.id!!)
+        verify(bookRepository, times(1)).findById(book.id)
     }
 
     @Test
@@ -131,7 +128,7 @@ class BookServiceTest {
         val currentBook = book
         val authors = createTestAuthors(book.authorIds)
 
-        whenever(bookRepository.findById(book.id!!)).thenReturn(currentBook)
+        whenever(bookRepository.findById(book.id)).thenReturn(currentBook)
         whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
         whenever(bookRepository.update(book)).thenReturn(book)
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
@@ -154,7 +151,7 @@ class BookServiceTest {
             publishingStatus = PublishingStatus.UNPUBLISHED,
         )
 
-        whenever(bookRepository.findById(book.id!!)).thenReturn(currentBook)
+        whenever(bookRepository.findById(book.id)).thenReturn(currentBook)
         whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
         whenever(bookRepository.update(book)).thenReturn(book)
 
@@ -171,7 +168,7 @@ class BookServiceTest {
             assertAuthor(authorDto, authors[index])
         }
 
-        verify(bookRepository, times(1)).findById(book.id!!)
+        verify(bookRepository, times(1)).findById(book.id)
         verify(bookDomainService, times(1)).canUpdateBook(currentBook, book)
         verify(bookRepository, times(1)).update(book)
         verify(authorRepository, times(1)).findByIds(book.authorIds)

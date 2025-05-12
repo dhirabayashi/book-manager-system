@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.domain.reposiroty
 
 import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 
 /**
  * 著者リポジトリ
@@ -16,15 +17,15 @@ interface AuthorRepository {
     /**
      * 著者を登録する
      *
-     * @param author 登録する著者。IDが指定されている場合はそれを使用する。未指定の場合は自動採番する
+     * @param author 登録する著者
      * @return 登録した著者情報
      */
-    fun add(author: Author): Author
+    fun add(author: DraftAuthor): Author
 
     /**
      * 著者を更新する
      *
-     * @param author 著者の更新データ。IDは指定する必要がある。
+     * @param author 著者の更新データ
      * @return 更新後の著者情報。IDに対応するデータがなく更新しなかった場合はnull
      */
     fun update(author: Author): Author?

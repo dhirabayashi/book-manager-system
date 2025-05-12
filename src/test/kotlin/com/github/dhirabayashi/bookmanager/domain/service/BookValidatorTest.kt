@@ -18,6 +18,7 @@ class BookValidatorTest {
     fun create_price(price: Int, isValid: Boolean) {
         val executable: () -> Unit = {
             val book = Book.create(
+                id = "id",
                 title = "Test Book",
                 price = price,
                 authorIds = listOf("author1"),
@@ -39,6 +40,7 @@ class BookValidatorTest {
     fun create_author(authorIds: List<String>, isValid: Boolean) {
         val executable: () -> Unit = {
             val book = Book.create(
+                id = "id",
                 title = "Test Book",
                 price = 1234,
                 authorIds = authorIds,

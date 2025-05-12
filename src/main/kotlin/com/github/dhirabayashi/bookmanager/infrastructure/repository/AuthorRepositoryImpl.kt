@@ -1,8 +1,8 @@
 package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
-import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
 import org.jooq.DSLContext
@@ -21,9 +21,9 @@ class AuthorRepositoryImpl(
             .fetch().map { toModel(it) }
     }
 
-    override fun add(author: Author): Author {
+    override fun add(author: DraftAuthor): Author {
         val record = create.newRecord(AUTHORS).also {
-            it.id = author.id ?: idGenerator.generate()
+            it.id = idGenerator.generate()
             it.name = author.name
             it.birthDate = author.birthDate
             it.store()
@@ -32,10 +32,6 @@ class AuthorRepositoryImpl(
     }
 
     override fun update(author: Author): Author? {
-        validate(author.id != null) {
-            "著者IDは必須です"
-        }
-
         // 更新実行
         val updatedCount = create.update(AUTHORS)
             .set(AUTHORS.NAME, author.name)

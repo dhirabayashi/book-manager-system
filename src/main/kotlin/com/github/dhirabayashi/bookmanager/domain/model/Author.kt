@@ -8,12 +8,12 @@ import java.time.LocalDate
 /**
  * 著者
  *
- * @property id 著者ID。未採番の場合はnull
+ * @property id 著者ID
  * @property name 名前
  * @property birthDate 生年月日
  */
 data class Author private constructor(
-    val id: String?,
+    val id: String,
     val name: String,
     val birthDate: LocalDate,
 ) {
@@ -21,7 +21,7 @@ data class Author private constructor(
         /**
          * 著者情報を生成する
          *
-         * @param id 著者ID。未採番の場合はnull
+         * @param id 著者ID
          * @param name 名前
          * @param birthDate 生年月日
          * @param clock クロック。テストから使うことを想定
@@ -29,7 +29,7 @@ data class Author private constructor(
          * @return 生成された著者
          */
         fun create(
-            id: String? = null,
+            id: String,
             name: String,
             birthDate: LocalDate,
             clock: Clock = Clock.systemDefaultZone(),

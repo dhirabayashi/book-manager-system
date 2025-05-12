@@ -1,6 +1,7 @@
 package com.github.dhirabayashi.bookmanager.domain.reposiroty
 
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 
 /**
  * 書籍リポジトリ
@@ -25,15 +26,15 @@ interface BookRepository {
     /**
      * 書籍を登録する
      *
-     * @param book 登録する書籍。IDが指定されている場合はそれを使用する。未指定の場合は自動採番する
+     * @param book 登録する書籍
      * @return 登録された書籍
      */
-    fun add(book: Book): Book
+    fun add(book: DraftBook): Book
 
     /**
      * 書籍を更新する
      *
-     * @param book 書籍の更新データ。IDは指定する必要がある。
+     * @param book 書籍の更新データ
      * @return 更新後の書籍
      */
     fun update(book: Book): Book?

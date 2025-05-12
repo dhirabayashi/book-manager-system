@@ -2,6 +2,7 @@ package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
 import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
 import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
@@ -57,30 +58,27 @@ class AuthorRepositoryImplTest {
     @Test
     @DisplayName("著者を追加できること")
     fun add() {
-        val author = Author.create(
-            id = "author1",
+        val draftAuthor = DraftAuthor.create(
             name = "Author1",
             birthDate = LocalDate.of(1978, 4, 5)
         )
-
         // 実行
-        val added = sut.add(author)
+        val added = sut.add(draftAuthor)
 
         // レスポンスの検証
-        assertThat(added.id).isEqualTo(author.id)
-        assertThat(added.name).isEqualTo(author.name)
-        assertThat(added.birthDate).isEqualTo(author.birthDate)
+        assertThat(added.name).isEqualTo(draftAuthor.name)
+        assertThat(added.birthDate).isEqualTo(draftAuthor.birthDate)
 
         // DB上のデータと一致しているか検証
         val actual = create.select()
             .from(AUTHORS)
-            .where(AUTHORS.ID.eq(author.id))
+            .where(AUTHORS.ID.eq(added.id))
             .fetchInto(Author::class.java)
 
         assertThat(actual.size).isEqualTo(1)
-        assertThat(actual[0].id).isEqualTo(author.id)
-        assertThat(actual[0].name).isEqualTo(author.name)
-        assertThat(actual[0].birthDate).isEqualTo(author.birthDate)
+        assertThat(actual[0].id).isEqualTo(added.id)
+        assertThat(actual[0].name).isEqualTo(added.name)
+        assertThat(actual[0].birthDate).isEqualTo(added.birthDate)
     }
 
     @Test

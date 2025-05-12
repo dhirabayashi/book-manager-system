@@ -2,6 +2,7 @@ package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
 import com.github.dhirabayashi.bookmanager.domain.model.Author
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -51,15 +52,16 @@ class AuthorServiceTest {
     @DisplayName("追加処理が呼び出され、追加された著者が返ってくること")
     fun add() {
         val author = Author.create(id = "id", name = "Author Two", birthDate = LocalDate.of(1980, 1, 1))
-        whenever(authorRepository.add(author)).thenReturn(author)
+        val draftAuthor = DraftAuthor.create(name = "Author Two", birthDate = LocalDate.of(1980, 1, 1))
+        whenever(authorRepository.add(draftAuthor)).thenReturn(author)
 
-        val result = sut.add(author)
+        val result = sut.add(draftAuthor)
 
         assertThat(result.id).isEqualTo("id")
         assertThat(result.name).isEqualTo("Author Two")
         assertThat(result.birthDate).isEqualTo(LocalDate.of(1980, 1, 1))
 
-        verify(authorRepository, times(1)).add(author)
+        verify(authorRepository, times(1)).add(draftAuthor)
     }
 
     @Test

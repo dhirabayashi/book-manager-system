@@ -2,8 +2,9 @@ package com.github.dhirabayashi.bookmanager.infrastructure.repository
 
 import com.github.dhirabayashi.bookmanager.domain.IdGenerator
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
-import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
@@ -44,22 +45,21 @@ class BookRepositoryImplTest {
     @DisplayName("書籍を登録し、IDで取得できること")
     fun add_find() {
         // テストデータ
-        val author = authorRepository.add(Author.create(null, "name", LocalDate.now().minusDays(1)))
+        val author = authorRepository.add(DraftAuthor.create("name", LocalDate.now().minusDays(1)))
 
-        val book = Book.create(
-            id = null,
+        val draftBook = DraftBook.create(
             title = "Kotlinで始めるDDD",
             price = 2200,
-            authorIds = listOf(author.id!!),
+            authorIds = listOf(author.id),
             publishingStatus = PublishingStatus.UNPUBLISHED
         )
 
-        val saved = sut.add(book)
-        val found = sut.findById(saved.id!!)
+        val saved = sut.add(draftBook)
+        val found = sut.findById(saved.id)
 
         assertThat(found).isNotNull
         assertThat(found!!.title).isEqualTo("Kotlinで始めるDDD")
-        assertThat(found.authorIds).containsExactly(author.id!!)
+        assertThat(found.authorIds).containsExactly(author.id)
     }
 
     @Test

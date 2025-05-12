@@ -2,6 +2,7 @@ package com.github.dhirabayashi.bookmanager.presentation.controller
 
 import com.github.dhirabayashi.bookmanager.application.service.BookService
 import com.github.dhirabayashi.bookmanager.domain.model.Book
+import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookCreateRequest
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookResponse
 import com.github.dhirabayashi.bookmanager.presentation.form.book.BookUpdateRequest
@@ -32,7 +33,7 @@ class BookController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun postBook(@RequestBody paramBook: BookCreateRequest): BookResponse {
-        val book = Book.create(
+        val book = DraftBook.create(
             title = paramBook.title,
             price = paramBook.price,
             authorIds = paramBook.authorIds,
