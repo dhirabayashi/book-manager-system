@@ -8,8 +8,8 @@ import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHORS
-import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHOR_BOOKS
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOKS
+import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOK_AUTHORS
 import com.github.dhirabayashi.bookmanager.test.TestcontainersConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
@@ -83,7 +83,7 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("書籍の更新で、booksとauthor_booksが更新できること")
+    @DisplayName("書籍の更新で、booksとbook_authorsが更新できること")
     fun update() {
         prepareUpdateTestData()
 
@@ -109,14 +109,14 @@ class BookRepositoryImplTest {
         assertThat(bookRecord!!.get(BOOKS.TITLE)).isEqualTo("Kotlinで学ぶアーキテクチャ")
         assertThat(bookRecord.get(BOOKS.PRICE)).isEqualTo(2500)
 
-        val authorBooks = create.select()
-            .from(AUTHOR_BOOKS)
-            .where(AUTHOR_BOOKS.BOOK_ID.eq("book1"))
-            .orderBy(AUTHOR_BOOKS.AUTHOR_ID)
+        val booksAuthors = create.select()
+            .from(BOOK_AUTHORS)
+            .where(BOOK_AUTHORS.BOOK_ID.eq("book1"))
+            .orderBy(BOOK_AUTHORS.AUTHOR_ID)
             .fetch()
-        assertThat(authorBooks.size).isEqualTo(2)
-        assertThat(authorBooks[0].get(AUTHOR_BOOKS.AUTHOR_ID)).isEqualTo("author3")
-        assertThat(authorBooks[1].get(AUTHOR_BOOKS.AUTHOR_ID)).isEqualTo("author4")
+        assertThat(booksAuthors.size).isEqualTo(2)
+        assertThat(booksAuthors[0].get(BOOK_AUTHORS.AUTHOR_ID)).isEqualTo("author3")
+        assertThat(booksAuthors[1].get(BOOK_AUTHORS.AUTHOR_ID)).isEqualTo("author4")
 
         // 余分なデータが更新されてないかも一応確認
         val anotherBook = create.select()
@@ -169,19 +169,19 @@ class BookRepositoryImplTest {
             .values("book3", "Kotlin Ultimate", 9900, "PUBLISHED")
             .execute()
 
-        create.insertInto(AUTHOR_BOOKS)
-            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-            .values("author1", "book1")
+        create.insertInto(BOOK_AUTHORS)
+            .columns(BOOK_AUTHORS.BOOK_ID, BOOK_AUTHORS.AUTHOR_ID)
+            .values("book1", "author1")
             .execute()
 
-        create.insertInto(AUTHOR_BOOKS)
-            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-            .values("author1", "book2")
+        create.insertInto(BOOK_AUTHORS)
+            .columns(BOOK_AUTHORS.BOOK_ID, BOOK_AUTHORS.AUTHOR_ID)
+            .values("book2", "author1")
             .execute()
 
-        create.insertInto(AUTHOR_BOOKS)
-            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-            .values("author2", "book3")
+        create.insertInto(BOOK_AUTHORS)
+            .columns(BOOK_AUTHORS.BOOK_ID, BOOK_AUTHORS.AUTHOR_ID)
+            .values("book3", "author2")
             .execute()
     }
 
@@ -200,10 +200,10 @@ class BookRepositoryImplTest {
             .values("book2", "Kotlinで始める単体テスト", 1400, "UNPUBLISHED")
             .execute()
 
-        create.insertInto(AUTHOR_BOOKS)
-            .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-            .values("author1", "book1")
-            .values("author2", "book1")
+        create.insertInto(BOOK_AUTHORS)
+            .columns(BOOK_AUTHORS.BOOK_ID, BOOK_AUTHORS.AUTHOR_ID)
+            .values("book1", "author1")
+            .values("book1", "author2")
             .execute()
     }
 }

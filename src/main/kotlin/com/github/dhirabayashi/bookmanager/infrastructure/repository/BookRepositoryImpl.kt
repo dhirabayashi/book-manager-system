@@ -5,8 +5,8 @@ import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.model.Book
 import com.github.dhirabayashi.bookmanager.domain.model.DraftBook
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.BookRepository
-import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.AUTHOR_BOOKS
 import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOKS
+import com.github.dhirabayashi.bookmanager.infrastructure.db.Tables.BOOK_AUTHORS
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -19,11 +19,11 @@ class BookRepositoryImpl(
     override fun findByAuthorId(authorId: String): List<Book> {
         // 書籍の一覧
         val books = create.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISHING_STATUS)
-            .from(AUTHOR_BOOKS)
+            .from(BOOK_AUTHORS)
             .join(BOOKS)
-            .on(BOOKS.ID.eq(AUTHOR_BOOKS.BOOK_ID))
-            .where(AUTHOR_BOOKS.AUTHOR_ID.eq(authorId))
-            .orderBy(AUTHOR_BOOKS.BOOK_ID)
+            .on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
+            .where(BOOK_AUTHORS.AUTHOR_ID.eq(authorId))
+            .orderBy(BOOK_AUTHORS.BOOK_ID)
             .fetch()
 
         // 著者が複数いるかもしれないため、書籍ごとに著者を改めて取得する
@@ -64,7 +64,7 @@ class BookRepositoryImpl(
             .execute()
 
         // 書籍と著者のリレーションの登録
-        insertAuthorBooks(bookId, book.authorIds)
+        insertBookAuthors(bookId, book.authorIds)
 
         return Book.create(
             id = bookId,
@@ -88,15 +88,15 @@ class BookRepositoryImpl(
             return null
         }
 
-        // 著者と書籍のリレーションの更新
+        // 書籍と著者のリレーションの更新
         // 同時実行時に不整合が生じるかもしれないが、ユースケース的には実際にそうなる可能性が低いため排他制御は一旦考えない
 
         // 件数自体変わってるかもしれないため、DELETEとINSERTを使う
-        create.delete(AUTHOR_BOOKS)
-            .where(AUTHOR_BOOKS.BOOK_ID.eq(book.id))
+        create.delete(BOOK_AUTHORS)
+            .where(BOOK_AUTHORS.BOOK_ID.eq(book.id))
             .execute()
 
-        insertAuthorBooks(book.id, book.authorIds)
+        insertBookAuthors(book.id, book.authorIds)
 
         return book
     }
@@ -123,26 +123,26 @@ class BookRepositoryImpl(
      * @return 著者IDリスト
      */
     private fun selectAuthorIds(bookId: String): List<String> {
-        return create.select(AUTHOR_BOOKS.AUTHOR_ID)
-            .from(AUTHOR_BOOKS)
-            .where(AUTHOR_BOOKS.BOOK_ID.eq(bookId))
-            .orderBy(AUTHOR_BOOKS.AUTHOR_ID)
+        return create.select(BOOK_AUTHORS.AUTHOR_ID)
+            .from(BOOK_AUTHORS)
+            .where(BOOK_AUTHORS.BOOK_ID.eq(bookId))
+            .orderBy(BOOK_AUTHORS.AUTHOR_ID)
             .fetch()
-            .map { it.get(AUTHOR_BOOKS.AUTHOR_ID) }
+            .map { it.get(BOOK_AUTHORS.AUTHOR_ID) }
     }
 
     /**
-     * 著者と書籍のリレーションを登録する
+     * 書籍と著者のリレーションを登録する
      *
      * @param bookId 書籍ID
      * @param authorIds 著者IDリスト
      */
-    private fun insertAuthorBooks(bookId: String, authorIds: List<String>) {
+    private fun insertBookAuthors(bookId: String, authorIds: List<String>) {
         create.batch(
             authorIds.map { authorId ->
-                create.insertInto(AUTHOR_BOOKS)
-                    .columns(AUTHOR_BOOKS.AUTHOR_ID, AUTHOR_BOOKS.BOOK_ID)
-                    .values(authorId, bookId)
+                create.insertInto(BOOK_AUTHORS)
+                    .columns(BOOK_AUTHORS.BOOK_ID, BOOK_AUTHORS.AUTHOR_ID)
+                    .values(bookId, authorId)
             }
         ).execute()
     }
