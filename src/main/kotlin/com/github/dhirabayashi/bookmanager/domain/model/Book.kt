@@ -1,8 +1,8 @@
 package com.github.dhirabayashi.bookmanager.domain.model
 
 import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
-import com.github.dhirabayashi.bookmanager.domain.check.validate
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
+import com.github.dhirabayashi.bookmanager.domain.service.BookValidator
 
 /**
  * 書籍情報
@@ -39,21 +39,17 @@ data class Book private constructor(
             authorIds: List<String>,
             publishingStatus: PublishingStatus,
         ): Book {
-            // チェック
-            validate(price >= 0) {
-                "価格は0円以上でなければなりません"
-            }
-            validate(authorIds.isNotEmpty()) {
-                "著者は最低1人は必要です"
-            }
-
-            return Book(
+            val book = Book(
                 id = id,
                 title = title,
                 price = price,
                 authorIds = authorIds,
                 publishingStatus = publishingStatus,
             )
+            // チェック
+            BookValidator.executeValidate(book)
+
+            return book
         }
     }
 }

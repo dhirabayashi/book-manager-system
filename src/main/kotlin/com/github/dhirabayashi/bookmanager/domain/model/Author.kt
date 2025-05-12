@@ -1,7 +1,7 @@
 package com.github.dhirabayashi.bookmanager.domain.model
 
 import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
-import com.github.dhirabayashi.bookmanager.domain.check.validate
+import com.github.dhirabayashi.bookmanager.domain.service.AuthorValidator
 import java.time.Clock
 import java.time.LocalDate
 
@@ -34,12 +34,12 @@ data class Author private constructor(
             birthDate: LocalDate,
             clock: Clock = Clock.systemDefaultZone(),
         ): Author {
-            // チェック
-            validate(birthDate.isBefore(LocalDate.now(clock))) {
-                "生年月日は過去日でなければなりません"
-            }
+            val author = Author(id, name, birthDate)
 
-            return Author(id, name, birthDate)
+            // チェック
+            AuthorValidator.executeValidate(author, clock)
+
+            return author
         }
     }
 }
