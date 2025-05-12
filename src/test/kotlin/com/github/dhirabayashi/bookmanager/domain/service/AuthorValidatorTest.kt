@@ -2,7 +2,8 @@ package com.github.dhirabayashi.bookmanager.domain.service
 
 import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.model.Author
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThatCode
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -26,15 +27,19 @@ class AuthorValidatorTest {
     fun create(birthDateStr: String, isValid: Boolean) {
         val birthDate = LocalDate.parse(birthDateStr)
 
-        val executable: () -> Unit = {
-            val author = Author.create(id = "id", name = "Test Author", birthDate = birthDate, clock = clock)
-            AuthorValidator.executeValidate(author, clock)
-        }
-
         if (isValid) {
-            org.junit.jupiter.api.assertDoesNotThrow(executable)
+            assertThatCode {
+                createAndValidateAuthor(birthDate)
+            }.doesNotThrowAnyException()
         } else {
-            Assert.assertThrows(ValidationException::class.java, executable)
+            assertThatThrownBy {
+                createAndValidateAuthor(birthDate)
+            }.isInstanceOf(ValidationException::class.java)
         }
+    }
+
+    private fun createAndValidateAuthor(birthDate: LocalDate) {
+        val author = Author.create(id = "id", name = "Test Author", birthDate = birthDate, clock = clock)
+        AuthorValidator.executeValidate(author, clock)
     }
 }

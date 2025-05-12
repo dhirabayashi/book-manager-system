@@ -4,7 +4,7 @@ import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus.PUBLISHED
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus.UNPUBLISHED
 import com.github.dhirabayashi.bookmanager.domain.model.Book
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -48,7 +48,7 @@ class BookDomainServiceTest {
         val actual = sut.canUpdateBook(currentBook, newBook)
 
         // 検証
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     private fun createBook(publishingStatus: PublishingStatus) = Book.create(

@@ -5,9 +5,9 @@ import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -86,9 +86,8 @@ class AuthorServiceTest {
             Author.create(id = "nonexistent", name = "Nonexistent Author", birthDate = LocalDate.of(1985, 1, 1))
         whenever(authorRepository.update(author)).thenReturn(null)
 
-        assertThrows<EntityNotFoundException> {
-            sut.update(author)
-        }
+        assertThatThrownBy { sut.update(author) }
+            .isInstanceOf(EntityNotFoundException::class.java)
 
         verify(authorRepository, times(1)).update(author)
     }

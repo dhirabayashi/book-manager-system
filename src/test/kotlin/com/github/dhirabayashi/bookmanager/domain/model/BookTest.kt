@@ -2,15 +2,15 @@ package com.github.dhirabayashi.bookmanager.domain.model
 
 import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.enum.PublishingStatus
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class BookTest {
     @Test
     @DisplayName("チェック処理が呼ばれていること")
     fun validate() {
-        assertThrows<ValidationException> {
+        assertThatThrownBy {
             Book.create(
                 id = "id",
                 title = "Test Book",
@@ -18,6 +18,6 @@ class BookTest {
                 authorIds = listOf("author1"),
                 publishingStatus = PublishingStatus.UNPUBLISHED
             )
-        }
+        }.isInstanceOf(ValidationException::class.java)
     }
 }
