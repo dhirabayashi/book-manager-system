@@ -71,19 +71,19 @@ class BookControllerIntegrationTest {
         val registeredBookId = objectMapper.readTree(responseContent).get("id").asText()
 
         // 実際にDBに登録されているか確認
-        val savedBook = bookRepository.findById(registeredBookId)
-        assertThat(savedBook).isNotNull
-        assertThat(savedBook?.title).isEqualTo("New Book")
-        assertThat(savedBook?.price).isEqualTo(2000)
-        assertThat(savedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
-        assertThat(savedBook?.authorIds).containsExactly(author1.id)
+        val addedBook = bookRepository.findById(registeredBookId)
+        assertThat(addedBook).isNotNull
+        assertThat(addedBook?.title).isEqualTo("New Book")
+        assertThat(addedBook?.price).isEqualTo(2000)
+        assertThat(addedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
+        assertThat(addedBook?.authorIds).containsExactly(author1.id)
 
         // レスポンスとDBの内容が一致しているか確認
-        assertThat(savedBook?.id).isEqualTo(registeredBookId)
-        assertThat(savedBook?.title).isEqualTo("New Book")
-        assertThat(savedBook?.price).isEqualTo(2000)
-        assertThat(savedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
-        assertThat(savedBook?.authorIds).containsExactly(author1.id)
+        assertThat(addedBook?.id).isEqualTo(registeredBookId)
+        assertThat(addedBook?.title).isEqualTo("New Book")
+        assertThat(addedBook?.price).isEqualTo(2000)
+        assertThat(addedBook?.publishingStatus?.name).isEqualTo("UNPUBLISHED")
+        assertThat(addedBook?.authorIds).containsExactly(author1.id)
     }
 
     @Test

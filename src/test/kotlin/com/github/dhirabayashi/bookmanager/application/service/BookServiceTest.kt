@@ -34,7 +34,7 @@ class BookServiceTest {
     private lateinit var bookDomainService: BookDomainService
 
     @InjectMocks
-    private lateinit var bookService: BookService
+    private lateinit var sut: BookService
 
     @Test
     @DisplayName("著者に紐づく書籍一覧を取得できること")
@@ -50,7 +50,7 @@ class BookServiceTest {
         whenever(authorRepository.findByIds(listOf("author1", "author2"))).thenReturn(bookTwoAuthors)
 
         // 実行
-        val result = bookService.retrieveBooksByAuthorId("author1")
+        val result = sut.retrieveBooksByAuthorId("author1")
 
         assertThat(result).hasSize(2)
 
@@ -94,7 +94,7 @@ class BookServiceTest {
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
 
         // 実行
-        val result = bookService.add(draftBook)
+        val result = sut.add(draftBook)
 
         // 検証
         assertBook(result, createdBook)
@@ -115,7 +115,7 @@ class BookServiceTest {
 
         whenever(bookRepository.findById(book.id)).thenReturn(null)
 
-        assertThatThrownBy { bookService.update(book) }
+        assertThatThrownBy { sut.update(book) }
             .isInstanceOf(EntityNotFoundException::class.java)
 
         verify(bookRepository, times(1)).findById(book.id)
@@ -134,7 +134,7 @@ class BookServiceTest {
         whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
 
         // 実行
-        bookService.update(book)
+        sut.update(book)
 
         verify(bookDomainService, times(1)).canUpdateBook(currentBook, book)
     }
@@ -142,36 +142,36 @@ class BookServiceTest {
     @Test
     @DisplayName("更新処理が呼び出され、更新された書籍が返ってくること")
     fun updateBook_shouldUpdateBook() {
-        val book = createTestBooks().last()
+        val newBook = createTestBooks().last()
         val currentBook = Book.create(
-            id = book.id,
+            id = newBook.id,
             title = "currentTitle",
             price = 99999,
             authorIds = listOf("currentAuthor"),
             publishingStatus = PublishingStatus.UNPUBLISHED,
         )
 
-        whenever(bookRepository.findById(book.id)).thenReturn(currentBook)
-        whenever(bookDomainService.canUpdateBook(currentBook, book)).thenReturn(true)
-        whenever(bookRepository.update(book)).thenReturn(book)
+        whenever(bookRepository.findById(newBook.id)).thenReturn(currentBook)
+        whenever(bookDomainService.canUpdateBook(currentBook, newBook)).thenReturn(true)
+        whenever(bookRepository.update(newBook)).thenReturn(newBook)
 
-        val authors = createTestAuthors(book.authorIds)
-        whenever(authorRepository.findByIds(book.authorIds)).thenReturn(authors)
+        val newAuthors = createTestAuthors(newBook.authorIds)
+        whenever(authorRepository.findByIds(newBook.authorIds)).thenReturn(newAuthors)
 
         // 実行
-        val result = bookService.update(book)
+        val result = sut.update(newBook)
 
-        assertBook(result, book)
+        assertBook(result, newBook)
 
-        assertThat(authors).hasSize(authors.size)
+        assertThat(newAuthors).hasSize(newAuthors.size)
         result.authors.forEachIndexed { index, authorDto ->
-            assertAuthor(authorDto, authors[index])
+            assertAuthor(authorDto, newAuthors[index])
         }
 
-        verify(bookRepository, times(1)).findById(book.id)
-        verify(bookDomainService, times(1)).canUpdateBook(currentBook, book)
-        verify(bookRepository, times(1)).update(book)
-        verify(authorRepository, times(1)).findByIds(book.authorIds)
+        verify(bookRepository, times(1)).findById(newBook.id)
+        verify(bookDomainService, times(1)).canUpdateBook(currentBook, newBook)
+        verify(bookRepository, times(1)).update(newBook)
+        verify(authorRepository, times(1)).findByIds(newBook.authorIds)
     }
 
     private fun createTestBooks(): List<Book> = listOf(

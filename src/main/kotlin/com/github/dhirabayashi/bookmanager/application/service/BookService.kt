@@ -50,6 +50,7 @@ class BookService(
      *
      * @param book 登録する書籍
      * @return 登録された書籍
+     * @throws ValidationException 存在しない著者が指定された場合
      */
     @Transactional(rollbackFor = [Exception::class])
     fun add(book: DraftBook): BookWithAuthorsDto {
@@ -73,7 +74,8 @@ class BookService(
      *
      * @param book 更新する書籍
      * @return 更新された書籍
-     * @throws ValidationException 書籍IDが未指定の場合
+     * @throws EntityNotFoundException IDに対する書籍が存在しない場合
+     * @throws ValidationException 出版済み書籍を未出版に更新しようとした場合、存在しない著者が指定された場合
      */
     @Transactional(rollbackFor = [Exception::class])
     fun update(book: Book): BookWithAuthorsDto {

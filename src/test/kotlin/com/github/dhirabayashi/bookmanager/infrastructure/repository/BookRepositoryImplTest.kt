@@ -54,8 +54,10 @@ class BookRepositoryImplTest {
             publishingStatus = PublishingStatus.UNPUBLISHED
         )
 
-        val saved = sut.add(draftBook)
-        val found = sut.findById(saved.id)
+        // 実行
+        val added = sut.add(draftBook)
+
+        val found = sut.findById(added.id)
 
         assertThat(found).isNotNull
         assertThat(found!!.title).isEqualTo("Kotlinで始めるDDD")
@@ -100,7 +102,10 @@ class BookRepositoryImplTest {
         assertThat(result).isNotNull
         assertThat(result!!.title).isEqualTo("Kotlinで学ぶアーキテクチャ")
 
-        val bookRecord = create.select().from(BOOKS).where(BOOKS.ID.eq("book1")).fetchOne()
+        val bookRecord = create.select()
+            .from(BOOKS)
+            .where(BOOKS.ID.eq("book1"))
+            .fetchOne()
         assertThat(bookRecord!!.get(BOOKS.TITLE)).isEqualTo("Kotlinで学ぶアーキテクチャ")
         assertThat(bookRecord.get(BOOKS.PRICE)).isEqualTo(2500)
 

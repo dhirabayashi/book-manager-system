@@ -1,7 +1,6 @@
 package com.github.dhirabayashi.bookmanager.application.service
 
 import com.github.dhirabayashi.bookmanager.application.exception.EntityNotFoundException
-import com.github.dhirabayashi.bookmanager.domain.check.ValidationException
 import com.github.dhirabayashi.bookmanager.domain.model.Author
 import com.github.dhirabayashi.bookmanager.domain.model.DraftAuthor
 import com.github.dhirabayashi.bookmanager.domain.reposiroty.AuthorRepository
@@ -45,7 +44,7 @@ class AuthorService(
      *
      * @param author 著者の更新データ
      * @return 更新後の著者
-     * @throws ValidationException 著者IDが未指定の場合
+     * @throws EntityNotFoundException IDに対する著者が存在しない場合
      */
     @Transactional(rollbackFor = [Exception::class])
     fun update(author: Author): AuthorDto {
